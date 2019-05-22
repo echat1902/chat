@@ -13,6 +13,19 @@ def server_recv_model(msg_dict):
     #            'send_msg': msg.html()}
 
 
+def build_record_msg(message,send_id,group_id,content_type,int_time,recv_id=None):
+    return {
+        "lid": message["lid"],
+        "send_user_id": send_id,
+        "group_id": group_id,
+        "recv_user_id": str(recv_id),
+        "content": message["send_msg"].encode(),
+        "content_type": content_type,
+        "add_time": int_time
+    }
+
+
+
 def client_recv_model(user_no,nick_name,content,content_type,int_time,group_id=0,recv_user_no=[]):
     """
     服务端发送的数据格式
