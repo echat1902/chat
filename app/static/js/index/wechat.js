@@ -16,7 +16,6 @@ $(document).click(function (e) {
 // 按回车键发送消息
 $('.message_frame').keydown(function (e) {
     if (e.keyCode == 13 && e.ctrlKey) {
-        console.log('回车加ctrl');
         // 光标往后移
         $(this).append("<div><br></div>");
         obj = $('.message_frame')[0];
@@ -29,7 +28,6 @@ $('.message_frame').keydown(function (e) {
         sel.addRange(range);
 
     } else if (e.keyCode == 13) {
-        console.log('回车');
         e.cancelBubble=true;
         e.preventDefault();
         e.stopPropagation();
