@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>易聊网</title>
+    <script src="/static/js/jquery-1.12.4.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/static/js/layer/layer.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/reg/reg.css"/>
+    <link rel="shortcut icon" href="/static/images/www.ico.la_32X32.ico">
+</head>
+<body>
+<header>
+    <a href="#" class="logo"></a>
+    <div class="desc">
+        <span>欢迎注册</span>&nbsp;&nbsp;&nbsp;
+        <a href="/index">首页</a>&nbsp;&nbsp;&nbsp;
+        <a href="/login">登陆</a>
+    </div>
+</header>
+<section>
+    <form action="/reg" id="form1">
+        <div class="register-box">
+            <label for="user_name" class="username_label">用 户 名
+                <input name="user_name" id="user_name" maxlength="20" type="text" placeholder="您的用户名和登录名"/>
+            </label>
+            <div class="tips">
+
+            </div>
+        </div>
+        <div class="register-box">
+            <label for="user_pwd" class="other_label">设 置 密 码
+                <input name="user_pwd" id="user_pwd" maxlength="20" type="password" placeholder="建议至少使用两种字符组合"/>
+            </label>
+            <div class="tips">
+
+            </div>
+        </div>
+        <div class="register-box">
+            <label for="user_rpwd" class="other_label">确 认 密 码
+                <input name="user_rpwd" id="user_rpwd" maxlength="20" type="password" placeholder="请再次输入密码"/>
+            </label>
+            <div class="tips">
+
+            </div>
+        </div>
+        <!--<div class="register-box">-->
+        <!--<label for="mobile" class="other_label">-->
+        <!--<span>中国 0086∨</span>-->
+        <!--<input class="phone" name='user_tel' id="mobile" maxlength="20" type="text" placeholder="建议使用常用手机"/>-->
+        <!--</label>-->
+        <!--<div class="tips">-->
+
+        <!--</div>-->
+        <!--</div>-->
+        <!--<div class="register-box">-->
+        <!--<label class="other_label">验 证 码-->
+        <!--<input name="verify" maxlength="20" type="text" placeholder="请输入验证码"/>-->
+        <!--</label>-->
+        <!--<span id="code"><img src="{:U('verify')}" alt="验证码" class='yzmImg'-->
+        <!--onclick="this.src='{:U(\'verify\',array(\'num\'=>mt_rand()))}'"/></span>-->
+        <!--<div class="tips">-->
+
+        <!--</div>-->
+        <!--</div>-->
+        <!--<div class="register-box">-->
+        <!--<label  class="other_label">手机验证码-->
+        <!--<input name="msg_code" maxlength="20" type="text" placeholder="请输入短信验证码"/>-->
+        <!--</label>-->
+        <!--<span id=""><div  id="yzmBtn" onclick="sendMsg()">获取验证码</div></span>-->
+        <!--<div class="tips">-->
+
+        <!--</div>-->
+        <!--</div>-->
+        <div class="arguement">
+            <input type="checkbox" checked id="xieyi"/>
+            阅读并同意
+            <a href="#">《易聊网注册协议》</a>
+            <a href="#">《隐私政策》</a>
+            <div class="tips">
+
+            </div>
+        </div>
+        <div class="submit_btn">
+            <button type="button" id="submit_btn">立 即 注 册</button>
+        </div>
+    </form>
+</section>
+<script src="/static/js/reg/reg.js" type="text/javascript" charset="utf-8"></script>
+<script src="/static/js/jquery.validate.min.js" type="text/javascript" charset="utf-8"></script>
+</body>
+<script>
+
+    //表单验证配置
+    var myvalidate = $('#form1').validate({
+        errorPlacement: function (error, element) {
+            if (element.is("input[name='verify']")) {
+                error.appendTo(element.parent().next().next())
+            } else if (element.is("input[name='msg_code']")) {
+                error.appendTo(element.parent().next().next())
+            } else {
+                error.appendTo(element.parent().next())
+            }
+
+        },
+        //配置验证规则
+        rules: {
+            user_name: {  //规则名称是表单元素的name属性值
+                required: true,
+                minlength: 2,
+                maxlength: 20,
+                remote: {
+                    url: '{:U("chkUser")}',
+                    type: 'post'
+                }
+            },
+            user_pwd: {
+                required: true,
+                minlength: 6,
+                maxlength: 20
+            },
+            user_rpwd: {
+                required: true,
+                equalTo: '#user_pwd'
+            },
+            user_tel: {
+                required: true,
+                //user_tel:true,
+                remote: {
+                    url: '{:U("chkTel")}',
+                    type: 'post'
+                }
+            },
+            msg_code: {
+                required: true,
+                remote: {
+                    url: '{:U("chkMsgCode")}',
+                    type: 'post'
+                }
+            },
+            verify: {
+                required: true,
+                remote: {
+                    url: '{:U("chkVerify")}',
+                    type: 'post'
+                }
+
+            }
+        },
+        //配置提示信息
+        messages: {
+            user_name: {  //规则名称是表单元素的name属性值
+                required: '用户名不能为空',
+                minlength: '用户名至少需要4个字符',
+                maxlength: '用户名最多允许20个字符',
+                remote: '用户名已被占用'
+            },
+            user_pwd: {
+                required: '密码不能为空',
+                minlength: '密码至少需要6个字符',
+                maxlength: '密码最多允许20个字符'
+            },
+            user_rpwd: {
+                required: '确认密码不能为空',
+                equalTo: '两次密码输入不一致'
+            },
+            // user_tel:{
+            //     required:'手机号不能为空',
+            //     //user_tel:"请正确填写您的手机号码",
+            // 	remote:'该号码已被注册过'
+            // },
+            // msg_code:{
+            //     required:'手机验证码不能为空',
+            //     remote:'短信验证码错误'
+            // },
+            // verify:{
+            //     required:'验证码不能为空',
+            //     remote:'验证码错误'
+            // }
+        },
+        //配置成功提示样式
+        errorElement: 'div',
+
+        success: function (label) {
+            label.prev().text('');
+            label.text('验证通过').css('color', '#0f0');
+        },
+        validClass: "ok"
+
+    })
+
+    function sendMsg() {
+
+        var mobile = $('input[name="user_tel"]').val();
+        var mobileReg = /^1[34578][0-9]{9}$/;
+        if (mobileReg.test(mobile)) {
+            RemainTime();
+            $.post('/sendMsg', {mobile: mobile}, function (msg) {
+                if (msg == '提交成功') {
+
+                } else {
+                    layer.tips(msg, '#yzmBtn', {
+                        tips: [3, '#FF7113']
+                    });
+                }
+            })
+        } else {
+            $('#mobile').parent().next('div').text('请输入正确的手机号码').css('color', '#f0f');
+            $('#mobile').parent().parent().css('border', 'solid 1px red')
+        }
+    }
+
+    //短信倒计时
+    var iTime = 59;
+    var Account;
+
+    function RemainTime() {
+        document.getElementById('yzmBtn').disabled = true;
+        var iSecond, sSecond = "", sTime = "";
+        if (iTime >= 0) {
+            iSecond = parseInt(iTime % 60);
+            iMinute = parseInt(iTime / 60)
+            if (iSecond >= 0) {
+                if (iMinute > 0) {
+                    sSecond = iMinute + "分" + iSecond + "秒";
+                } else {
+                    sSecond = iSecond + " 秒后重新获取";
+                }
+            }
+            sTime = sSecond;
+            if (iTime == 0) {
+                clearTimeout(Account);
+                sTime = '重新获取验证码';
+                iTime = 59;
+                document.getElementById('yzmBtn').disabled = false;
+            } else {
+                Account = setTimeout("RemainTime()", 1000);
+                iTime = iTime - 1;
+            }
+        } else {
+            sTime = '没有倒计时';
+        }
+        document.getElementById('yzmBtn').innerHTML = sTime;
+    }
+
+    //提交注册表单
+    $('#submit_btn').click(function () {
+        if (myvalidate.form()) {
+            $.post("/register", $('form').serialize(), function (res) {
+                if (res.status == 1) {
+                    layer.msg('注册成功', {icon: 6, time: 1000}, function () {
+                        location.href = "/index";
+                    })
+                } else {
+                    layer.msg(res.msg)
+                }
+            }, 'json')
+        }
+
+
+        return false;
+    })
+
+</script>
+</html>
