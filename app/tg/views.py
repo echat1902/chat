@@ -64,11 +64,7 @@ def get_chat_records():
 
     # 获取聊天记录
     res = ChatRecords.query.filter_by(lid=lid).order_by(db.asc(ChatRecords.add_time)).limit(10).all()
-    # res = db.session.query(ChatRecords).join(User, ChatRecords.send_user_id == User.user_id).filter(
-    #     ChatRecords.lid == lid).order_by(db.desc(ChatRecords.add_time)).limit(10).all()
 
-    # print(res)
-    # records = {'userinfo': subinfo, 'records': []}
     records = []
     for i in res:
         uinfo = User.query.filter_by(user_id=i.send_user_id).first().to_json()
