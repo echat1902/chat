@@ -45,8 +45,8 @@ def create_app():
     from .szh import szh as szh_blueprint
     app.register_blueprint(szh_blueprint)
 
-    from .wxx import wxx as wxx_blueprint
-    app.register_blueprint(wxx_blueprint)
+    # from .wxx import wxx as wxx_blueprint
+    # app.register_blueprint(wxx_blueprint)
 
     from .zsg import zsg as zsg_blueprint
     app.register_blueprint(zsg_blueprint)
