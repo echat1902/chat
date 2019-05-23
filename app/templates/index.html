@@ -11,6 +11,7 @@
 
     <link rel="stylesheet" type="text/css" href="/static/imagePreview/css/pictureViewer.css"/>
     <link rel="stylesheet" type="text/css" href="/static/css/index/processBar.css"/>
+    <link rel="stylesheet" href="/static/layui/css/layui.css">
     <style>
         .send_msg {
             width: 160px;
@@ -98,6 +99,7 @@
                 <!--头像插件-->
                 <div class="own_head am-dropdown-toggle"
                      style="background: url(/static/images/head/{{ data[0].pic_name }});background-size: contain;"></div>
+                <!-- 点击头像，取消am-dropdown-content的显示，改为显示user_info_show元素块
                 <div class="am-dropdown-content">
                     <div class="own_head_top">
                         <div class="own_head_top_text">
@@ -114,7 +116,7 @@
                             <a href=""><img src="/static/images/icon/head_2.png"/></a>
                         </div>
                     </div>
-                </div>
+                </div> -->
             </div>
             <!--三图标-->
             <div class="sidestrip_icon">
@@ -163,6 +165,7 @@
                         <li
                                 id={{ i.lid }}
                                         title={{ i.user_nick_name }}{{ i.group_name }}
+                                uid={{ i.user_id }}{{ i.group_id }}
                         >
                             <div class="red_circle">1</div>
                             <div class="user_head"><img src=/static/images/head/{{ i.pic_name }}/></div>
@@ -399,7 +402,86 @@
         </div>
     </div>
 </div>
-
+<!-- 用户个人信息页 -->
+<style>
+    /* 取消添加好友页面的默认显示 */
+    #add_friend_frame{
+        display: none;
+    }
+    #user_info_show{
+        position: relative;
+        display: none;
+    }
+    #user_info_show .user_head_show{
+        width: 100px;
+        position: absolute;
+        top: 50px;
+        left: 20px;
+    }
+    #user_info_show .user_head_show img{
+        width: 100px;
+    }
+    #user_info_show .user_head_show button{
+        margin-top: 10px;
+        margin-left: 18px;
+    }
+    #user_info_show form{
+        width:400px;
+        float: right;
+        padding-top: 50px;
+        position: relative;
+    }
+    #user_info_show form input{
+        width:300px;
+    }
+    #user_info_show form button{
+        position: absolute;
+        right: 100px;
+    }
+</style>
+<div id="user_info_show">
+    <div class="user_head_show">
+        <img src="/static/images/head/{{ data[0].pic_name }}" alt="头像">
+        <button type="button" class="layui-btn" id="user_head_upload">上传</button>
+    </div>
+    <form class="layui-form layui-form-pane" method="post">
+        <div class="layui-form-item">
+            <label class="layui-form-item">用户名</label>
+            <div class="layui-form-block">
+                <input type="text" name="user_nick_name" lay-verify="required" value="{{ data[0].user_nick_name }}" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-item">手机号</label>
+            <div class="layui-form-block">
+                <input type="text" name="user_tel" lay-verify="phone"
+                    {% if data[0].user_tel %}
+                       value="{{ data[0].user_tel }}"
+                    {% else %}
+                       placeholder="暂未填写"
+                    {% endif %}
+                    autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-item">邮箱</label>
+            <div class="layui-form-block">
+                <input type="email" name="user_email" required lay-verify="email"
+                    {% if data[0].user_email %}
+                       value="{{ data[0].user_email }}"
+                    {% else %}
+                       placeholder="暂未填写"
+                    {% endif %}
+                    autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="user_info_form">保存</button>
+            </div>
+        </div>
+    </form>
+</div>
 <script type="text/javascript" src="/static/js/jquery-1.12.4.min.js"></script>
 <script type="text/javascript" src="/static/js/amazeui.min.js"></script>
 <script type="text/javascript" src="/static/js/zUI.js"></script>
@@ -409,6 +491,7 @@
 <script src="/static/webuploader/webuploader.min.js"></script>
 <script src="/static/imagePreview/js/pictureViewer.js"></script>
 <script type="text/javascript" src="//cdn.bootcss.com/socket.io/1.5.1/socket.io.min.js"></script>
+<script src="/static/layui/layui.js"></script>
 <script type="text/javascript">
     var now_time = (new Date()).getTime();
     pic_addr = '/static/images/head/';
@@ -464,6 +547,38 @@
             }
         }, 'json')
     });
+    //点击添加好友/群
+    $(document).on('click', '#add_friend_button', function () {
+        sub_id = $('#one_person').attr('obj_id');
+        pri_id = $('#user_id').val();
+        obj_type = $('#one_person').attr('obj_type');
+        $.post('/addFriend', {'sub_id': sub_id, 'pri_id': pri_id, 'obj_type': obj_type}, function (data) {
+            if (data.status == 1) {
+                layer.msg(data.msg, {time: 2000}, function () {
+                    console.log(data)
+                    layer.close(index1)
+                    str = '<li\n' +
+                        '         id=' + data.data.lid + '\n' +
+                        '         uid=' + data.data.group_id + '\n' +
+                        '         title=' + data.data.group_name + '\n' +
+                        '         >\n' +
+                        '           <div class="red_circle">1</div>\n' +
+                        '           <div class="user_head"><img src=/static/images/head/' + data.data.pic_name + ' /></div>\n' +
+                        '           <div class="user_text">\n' +
+                        '               <p class="user_name">\n' +
+                        '                   ' + data.data.group_name + '\n' +
+                        '               </p>\n' +
+                        '               <p class="user_message">' + data.data.content + '</p>\n' +
+                        '           </div>\n' +
+                        '           <div class="user_time">' + data.data.update_time + '</div>\n' +
+                        '      </li>';
+                    $('.user_list').append(str)
+                });
+            } else {
+                layer.msg(data.msg)
+            }
+        }, 'json')
+    });
     //关闭右边聊天框
     function close_talk() {
         $('.windows_body,.windows_input').css('display', 'none')
@@ -514,6 +629,7 @@
                     obj.parent().parent().remove();
                     str = '<li\n' +
                         '         id=' + data.data.lid + '\n' +
+                        '         uid=' + data.data.pri_id + '\n' +
                         '         title=' + data.data.user_nick_name + '\n' +
                         '         >\n' +
                         '           <div class="red_circle">1</div>\n' +
@@ -534,9 +650,34 @@
 
         }, 'json')
     })
+    //点击用户头像，弹出个人信息页
+    $(".own_head").click(function () {
+       index2=layer.open({
+            type: 1,
+            area: ['580px', '440px'],
+            title: '个人信息',
+            content: $('#user_info_show')
+       })
+    });
+    //加载layui入口文件(包含头像上传，用户个人信息表单提交功能)
+    layui.config({
+        base: '/static/js/'
+    }).use('layui_index');
+    //如果个人信息页 手机号或邮箱为空，则跳过相应的前端验证
+    $("#user_info_show form button").click(function () {
+        var input_tel = $("[name=user_tel]");
+        var input_email = $("[name=user_email]");
+
+        if (input_tel.val() == ''){
+            input_tel.removeAttr('lay-verify');
+        }
+        if (input_email.val() == ''){
+            input_email.removeAttr('lay-verify');
+        }
+    });
+
     //三图标
     window.onload = function () {
-
         //生成聊天信息
         function create_chart(self, content) {
             pic_name = eval("'" + content["pic_name"] + "'"); // "我是unicode编码"
