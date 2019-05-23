@@ -16,6 +16,7 @@
             width: 160px;
             height: 80px;
         }
+
         #add_friend_frame {
             width: 90%;
             height: 80%;
@@ -160,8 +161,8 @@
                 <ul class="user_list">
                     {% for i in data[1] %}
                         <li
-                            id={{ i.lid }}
-                            title={{ i.user_nick_name }}{{ i.group_name }}
+                                id={{ i.lid }}
+                                        title={{ i.user_nick_name }}{{ i.group_name }}
                         >
                             <div class="red_circle">1</div>
                             <div class="user_head"><img src=/static/images/head/{{ i.pic_name }}/></div>
@@ -339,7 +340,7 @@
                     <div class="extend" class="am-btn am-btn-success"
                          data-am-offcanvas="{target: '#doc-oc-demo3'}"></div>
                     <!-- 侧边栏内容 -->
-                    <div id="doc-oc-demo3" class="am-offcanvas" >
+                    <div id="doc-oc-demo3" class="am-offcanvas">
                         <div class="am-offcanvas-bar am-offcanvas-bar-flip" style="height: 680px;margin:auto">
                             <div class="am-offcanvas-content">
                                 <p><a href="http://music.163.com/#/song?id=385554" target="_blank">网易音乐</a></p>
@@ -413,7 +414,7 @@
     pic_addr = '/static/images/head/';
     //点击添加好友按钮
     $('#add_button').click(function () {
-        index1=layer.open({
+        index1 = layer.open({
             type: 1,
             area: ['580px', '440px'],
             title: '添加好友',
@@ -485,13 +486,13 @@
         $.get('/friRequest?user_id=' + user_id, '', function (data) {
             console.log(data)
             $.each(data.data, function (k, v) {
-                str ='<div class="new_friend" id="'+v.pri_id+'">\n' +
+                str = '<div class="new_friend" id="' + v.pri_id + '">\n' +
                     '                    <div class="uinfo">\n' +
-                    '                        <img src="'+pic_addr+v.pic_name+'"/>\n' +
+                    '                        <img src="' + pic_addr + v.pic_name + '"/>\n' +
                     '                    </div>\n' +
                     '                    <div class="uinfo">\n' +
-                    '                        <div style="margin: 5px 5px 10px 5px;">'+v.user_nick_name+'</div>\n' +
-                    '                        <div style="margin-left: 5px;">'+v.remark+'</div>\n' +
+                    '                        <div style="margin: 5px 5px 10px 5px;">' + v.user_nick_name + '</div>\n' +
+                    '                        <div style="margin-left: 5px;">' + v.remark + '</div>\n' +
                     '                    </div>\n' +
                     '                    <div class="uinfo">\n' +
                     '                        <input type="button" class="recv" value="接受"/>\n' +
@@ -502,36 +503,36 @@
         }, 'json')
     });
     //接受好友
-    $(document).on('click','.recv',function () {
+    $(document).on('click', '.recv', function () {
         obj = $(this)
         var pri_id = obj.parent().parent().attr('id')
         var sub_id = $('#user_id').val();
-        $.post('/friRequest',{pri_id:pri_id,sub_id:sub_id},function (data) {
+        $.post('/friRequest', {pri_id: pri_id, sub_id: sub_id}, function (data) {
             console.log(data);
-            if(data.status == 1){
-                layer.msg(data.msg,{time:2000},function () {
+            if (data.status == 1) {
+                layer.msg(data.msg, {time: 2000}, function () {
                     obj.parent().parent().remove();
                     str = '<li\n' +
-                    '         id='+data.data.lid+'\n' +
-                    '         title='+data.data.user_nick_name+'\n' +
-                    '         >\n' +
-                    '           <div class="red_circle">1</div>\n' +
-                    '           <div class="user_head"><img src=/static/images/head/'+data.data.pic_name+' /></div>\n' +
-                    '           <div class="user_text">\n' +
-                    '               <p class="user_name">\n' +
-                    '                   '+data.data.user_nick_name+'\n' +
-                    '               </p>\n' +
-                    '               <p class="user_message">'+data.data.content+'</p>\n' +
-                    '           </div>\n' +
-                    '           <div class="user_time">'+data.data.update_time+'</div>\n' +
-                    '      </li>';
+                        '         id=' + data.data.lid + '\n' +
+                        '         title=' + data.data.user_nick_name + '\n' +
+                        '         >\n' +
+                        '           <div class="red_circle">1</div>\n' +
+                        '           <div class="user_head"><img src=/static/images/head/' + data.data.pic_name + ' /></div>\n' +
+                        '           <div class="user_text">\n' +
+                        '               <p class="user_name">\n' +
+                        '                   ' + data.data.user_nick_name + '\n' +
+                        '               </p>\n' +
+                        '               <p class="user_message">' + data.data.content + '</p>\n' +
+                        '           </div>\n' +
+                        '           <div class="user_time">' + data.data.update_time + '</div>\n' +
+                        '      </li>';
                     $('.user_list').append(str)
                 })
-            }else{
+            } else {
                 layer.msg(data.msg)
             }
 
-        },'json')
+        }, 'json')
     })
     //三图标
     window.onload = function () {
@@ -543,35 +544,45 @@
             send_msg = eval("'" + content["send_msg"] + "'"); // "我是unicode编码"
             msg_type = content['msg_type'] ? content['msg_type'] : 1;
             if (msg_type == 1) {
-                info = '<li class=' + self + '><img src="/static/images/head/' + pic_name + '" title="' + user_nick_name + '"><span>' + send_msg + '</span></li>'
-            }else if (msg_type == 2) {
-                info = '<li class=' + self + '><img src="/static/images/head/' + pic_name + '" title="' + user_nick_name + '"><img src=">' + send_msg + '" /></li>'
+                var info = '<li class=' + self + '><img src="/static/images/head/' + pic_name + '" title="' + user_nick_name + '"><span>' + send_msg + '</span></li>'
+                $('#chatbox').append(info)
+            } else if (msg_type == 2) {
+                var info = '<li class=' + self + '><img src="/static/images/head/' + pic_name + '" title="' + user_nick_name + '"><img src=">' + send_msg + '" /></li>'
+                $('#chatbox').append(info)
+            }else{
+                var img_addr = pic_addr + pic_name;
+                var file_name = content['file_name'];
+                var str_file_ext = content['file_ext'];
+                var filesize = get_file_size(content['file_size']);
+                var content_type = 3;
+                file_show('other', img_addr, file_name, str_file_ext, 2, filesize, content_type);
             }
-            $('#chatbox').append(info)
+
         }
+
         var msg_nums = [];
-         var boo = true;
+        var boo = true;
         //等待服务器推送消息
-        namespace = '/flasksocketio';
+        var namespace = '/flasksocketio';
         var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + namespace);
 
         socket.on('server_response', function (res) {
             res = JSON.parse(res);
             lid = res.lid;
-            num_area = $('#'+lid).children('div').eq(0);
-            $('#'+lid).children('div').eq(2).children('p').eq(1).html(res.send_msg);
-            if($('#'+lid).hasClass('user_active')){
+            num_area = $('#' + lid).children('div').eq(0);
+            $('#' + lid).children('div').eq(2).children('p').eq(1).html(res.send_msg);
+            if ($('#' + lid).hasClass('user_active')) {
                 msg_nums[lid] = 0;
-                num_area.css('display','none');
+                num_area.css('display', 'none');
                 if (res.user_nick_name != "{{data[0].user_nick_name}}") {
                     create_chart('other', res);
                     send_msg.value = '';
                 }
-            }else{
-                num_area.css('display','block');
-                if(msg_nums[lid]) {
-                    msg_nums[lid] = msg_nums[lid]+1
-                }else{
+            } else {
+                num_area.css('display', 'block');
+                if (msg_nums[lid]) {
+                    msg_nums[lid] = msg_nums[lid] + 1
+                } else {
                     msg_nums[lid] = 1;
                 }
                 num_area.html(msg_nums[lid]);
@@ -591,6 +602,7 @@
             open_talk();
             $('#talkbox').css('display', 'block');
             lid = $(this).attr("id");
+            $('.windows_body').attr('lid', lid);
             user_title = $(this).attr('title');
             $(this).addClass('user_active');
             $(this).siblings().removeClass('user_active');
@@ -610,15 +622,15 @@
                     }
                     img_addr = pic_addr + v.userinfo.pic_name;
                     if (v.content_type == 1) {
-                        var info = '<li class=' + u + '><img src="' + img_addr + '" title="' + v.userinfo.user_nick_name + '"><span>' + v.content + '</span></li>'
+                        var info = '<li class=' + u + ' utype=' + v.content_type + ' ><img src="' + img_addr + '" title="' + v.userinfo.user_nick_name + '"><span>' + v.content + '</span></li>'
                     } else if (v.content_type == 2) {
-                        info = '<li class=' + u + '><img src="' + img_addr + '" title="' + v.userinfo.user_nick_name + '"><img src="' + v.content + '" /></li>'
+                        info = '<li class=' + u + ' utype=' + v.content_type + ' ><img  src="' + img_addr + '" title="' + v.userinfo.user_nick_name + '"><img class="send_msg" src="' + v.content + '" /></li>'
                     } else {
                         file_name = v.file_info.file_name;
                         str_file_ext = v.file_info.file_ext;
                         //显示文件大小
                         filesize = get_file_size(v.file_info.file_size);
-                        file_show(u, img_addr, file_name, str_file_ext, 2,filesize);
+                        file_show(u, img_addr, file_name, str_file_ext, 2, filesize, v.content_type);
                     }
                     $('#chatbox').append(info)
                 })
@@ -643,9 +655,9 @@
             return filesize;
         }
 
-         // 文件展示
-        function file_show(obj, img_addr, file_name, str_file_ext, is_process,file_size=0) {
-            chat.append('<li class=' + obj + '><img src="' + img_addr + '"><i></i></li>');
+        // 文件展示
+        function file_show(obj, img_addr, file_name, str_file_ext, is_process, file_size = 0, content_type) {
+            chat.append('<li class=' + obj + ' utype=' + content_type + ' ><img src="' + img_addr + '"><i></i></li>');
             $("#chatbox li").last().children('i').load('/static/view/processBar.html', function () {
                 is_in = jQuery.inArray(str_file_ext, file_exts);
                 if (is_in == -1) {
@@ -661,7 +673,7 @@
                     $('.progress-bar').css('width', '0%');
                     $('.progress-bar').text('0%');
                     $('.progress-bar').removeClass('progress-bar-danger progress-bar-success');
-                }else{
+                } else {
                     $('.middle_text').last().html(file_size)
                 }
                 //让滚动条到最底部
@@ -669,6 +681,23 @@
                 scrollTop = chat[0].scrollHeight;
                 chat.parent().scrollTop(scrollTop);
             });
+        }
+
+         // 发送文件时的消息格式
+        function file_format(obj_file) {
+            //最后一个聊天对象
+            var chat_obj = $('#chatbox li').last();
+            var content = {
+                'lid':$('.windows_body').attr('lid'),
+                'send_user_id':$('#user_id').val(),
+                'recv_user_id':chat_obj.attr('xt'),
+                'file_name' :obj_file.name,
+                'file_path':'/static/upload/'+now_time+'/',
+                'msg_type':chat_obj.attr('utype'),
+                'file_size':obj_file.size
+            };
+            console.log(content);
+            return content;
         }
 
         var j = 0;
@@ -705,7 +734,7 @@
                         var file_name = file.name;
                         var str_file_ext = file.ext;
                         //展示文件
-                        file_show(obj, img_addr, file_name, str_file_ext, 1)
+                        file_show(obj, img_addr, file_name, str_file_ext, 1, 0, 3)
                     }
                 });
                 uploader.on('startUpload', function () { // 开始上传时，调用该方法
@@ -735,6 +764,8 @@
                         //显示文件大小
                         filesize = get_file_size(file.size);
                         $(' .middle_text').last().html(filesize);
+                        //发送文件
+                        msg = file_format(file)
                     } else {
                         file_info = file.source.source;
                         var reader = new FileReader();
@@ -742,7 +773,7 @@
                         reader.readAsDataURL(file_info);
                         reader.onload = function (e) {
                             $('#chatbox').append(
-                                '<li class="me"><img src="' +
+                                '<li class="me" utype="' + 2 + '"><img src="' +
                                 '/static/images/head/{{data[0].pic_name}}">' +
                                 '<img class="send_msg" src="' + this.result + '" />' + '</li>'
                             );
@@ -750,6 +781,18 @@
                             chat = $('#chatbox');
                             scrollTop = chat[0].scrollHeight;
                             chat.parent().scrollTop(scrollTop);
+
+                            //发送文件
+                            //用户id
+                            var user_id = $('#user_id').val();
+                            lid = $('.user_active').attr('id')
+                            content = {
+                                'lid': lid,
+                                'send_user_id':user_id,
+                                'send_msg': this.result,
+                                'msg_type': 1
+                            }
+                            socket.emit('imessage', content);
                         }
                     }
 
@@ -786,9 +829,12 @@
                 lid = $('.user_active').attr('id')
                 chat = $('#chatbox');
                 talk = $('#talkbox');
-                namespace = '/flasksocketio';
-                var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + namespace);
-                content = {'lid':lid,'user_nick_name': user_nick_name, 'pic_name': pic_name, 'send_msg': msg.html()}
+                content = {
+                    'lid': lid,
+                    'send_user_id':user_id,
+                    'send_msg': msg.html(),
+                    'msg_type': 1
+                }
                 socket.emit('imessage', content);
                 create_chart('me', content);
                 msg.html('');
@@ -805,7 +851,7 @@
                 si1.style.background = "url(/static/images/icon/head_2_1.png) no-repeat";
                 si2.style.background = "";
                 si3.style.background = "";
-                $('.obj_list').css('display','none')
+                $('.obj_list').css('display', 'none')
             };
             si2.onclick = function () {
                 si2.style.background = "url(/static/images/icon/head_3_1.png) no-repeat";
@@ -818,7 +864,7 @@
                 si1.style.background = "";
                 si2.style.background = "";
                 close_talk();
-                $('.obj_list').css('display','none')
+                $('.obj_list').css('display', 'none')
             };
         };
         a();
