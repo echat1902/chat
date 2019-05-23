@@ -1,84 +1,121 @@
 from sqlalchemy import func
 from app.common.funs import *
-from app.common.funs import get_date
+
 from app.models import *
-from ..models import ChatList, ChatRecords
+from ..models import ChatList, ChatRecords,YlFiles
 
 
 def server_recv_model():
     """服务端接收的数据格式"""
     # msg_dict = {'lid': lid,
-    #            'user_nick_name': user_nick_name,
-    #            'pic_name': pic_name,
+    #            'send_user_id': user_id,
+    #            'msg_type':str
     #            'send_msg': msg.html()}
 
+    # msg_dict = lid,\
+    #            file_path,\
+    #            file_name,\
+    #            msg_type,\
+    #            file_size,\
+    #            send_user_id,\
+    #            recv_user_id=None
 
-def build_record_msg(message,send_id,group_id,content_type,int_time,recv_id=None):
+
+def build_record_msg(message,send_id,obj,int_time,content,recv_id=None):
     """
     将要储存进消息记录的数据转化为字典
     :param message:
     :param send_id:
-    :param group_id:
-    :param content_type:
+    :param obj:
     :param int_time:
+    :param content:
     :param recv_id:
     :return:
     """
-    if recv_id:
+    content_type = int(message["msg_type"])
+    lid = int(message["lid"])
+    if recv_id:#群聊天＠人时
         return {
-            "lid": message["lid"],
+            "lid": lid,
             "send_user_id": send_id,
-            "group_id": group_id,
+            "group_id": obj.group_id,
             "recv_user_id": str(recv_id),
-            "content": message["send_msg"].encode(),
+            "content": content.encode(),
             "content_type": content_type,
             "add_time": int_time
         }
     else:
+        if obj.type == 1:#
+            recv_id = get_recv_id_one(obj,send_id)#获取接收消息的用户id
+            return {
+                "lid": lid,
+                "send_user_id": send_id,
+                "group_id": obj.group_id,
+                "recv_user_id": str(recv_id),
+                "content": content.encode(),
+                "content_type": content_type,
+                "add_time": int_time
+            }
+        #普通群聊
         return {
-            "lid": message["lid"],
+            "lid": lid,
             "send_user_id": send_id,
-            "group_id": group_id,
-            "content": message["send_msg"].encode(),
+            "group_id": obj.group_id,
+            "content": content.encode(),
             "content_type": content_type,
             "add_time": int_time
         }
 
 
-
-def client_recv_model(user_no,nick_name,content,content_type,int_time,group_id=0,recv_user_no=[]):
+def add_file_yi_file(message,int_time,group_id=None,recv_id=None):
     """
-    服务端发送的数据格式
-    :param user_no:
-    :param nick_name:
+    将文件信息添加到文件表
+    :param obj:
     :param content:
-    :param content_type:
     :param int_time:
-    :param group_id:
-    :param recv_user_no:
     :return:
     """
-    msg_dict = {
-        "send_user_no":user_no,#发送者易号
-        "send_user_nick_name":nick_name,#发送者群昵称/私聊则本名
-        "content":content,#消息内容
-        "content_type": content_type, # int消息格式消息格式1文本/2文件
-        "send_time":get_date(int_time),
-        "group_id":group_id,#0私聊/群id
-        "recv_no": recv_user_no,  # 群聊＠用户名，默认为[]
-    }
-    return msg_dict
+    if not group_id:#私聊文件
+        file_dict = {
+            "send_user_id":int(message["send_user_id"]),
+            "recv_user_id":recv_id,
+            "file_name":message["file_name"],
+            "file_path":message["file_path"],
+            "file_size":message["file_size"],
+            "add_time":int_time
+        }
+    else:#群聊文件
+        file_dict = {
+            "send_user_id": int(message["send_user_id"]),
+            "group_id": group_id,
+            "file_name": message["file_name"],
+            "file_path": message["file_path"],
+            "file_size": message["file_size"],
+            "add_time": int_time
+        }
+    YlFiles.add_one(**file_dict)
 
 
-def get_lastleave_record_obj(user_id):
+def get_file_id(pri_id,int_time):
     """
-    获取记录表里该用户上次离开后所有用户的聊天记录
-    :param user_no:
+    根据发送者跟时间获取文件id
+    :param pri_id:
+    :param int_time:
     :return:
     """
+    return db.session.query(YlFiles.file_id).filter(YlFiles.send_user_id==pri_id,YlFiles.add_time==int_time).first()[0]
 
-    lastleave_recordid = db.session.query(func.max(ChatRecords.record_id)).filter(ChatRecords.send_user_id==user_id,ChatRecords.content_type==5).first()[0]
-    return db.session.query(ChatRecords).filter(ChatRecords.record_id>lastleave_recordid).all()
+
+def get_pick_name(obj,send_id):
+    """
+    根据lid对象及用户id返回个人昵称或群昵称
+    :param lid:
+    :param send_id:
+    :return:
+    """
+    if obj.group_id == 0:
+        return query_user_pic_name(send_id)
+    return query_user_groupnick_name(send_id,obj.group_id)
 
 
 def get_obj_by_lid(lid):
@@ -90,18 +127,21 @@ def get_obj_by_lid(lid):
     return db.session.query(ChatList).filter(ChatList.lid==lid).first()
 
 
-def update_chatlist_one(obj,pri_id,sub_id,content,add_time):
+def update_chatlist(obj,pri_id,content,add_time):
     """
-    更新chatlist的私聊中的最后一条信息
+    更新chatlist中的最后一条信息（包括私聊群聊）
     :param obj:
     :param pri_id:
-    :param sub_id:
     :param content:
     :param add_time:
+    :param sub_id:
+    :param group_id:
     :return:
     """
+    if obj.type ==1:
+        if obj.pri_user_id != pri_id:
+            obj.sub_user_id = obj.pri_user_id
     obj.pri_user_id = pri_id
-    obj.sub_user_id = sub_id
     obj.content = content
     obj.update_time = add_time
     db.session.add(obj)
@@ -122,11 +162,6 @@ def update_chatlist_group(obj,pri_id,content,add_time):
     db.session.add(obj)
 
 
-
-def get_group_list(user_id):
-    return db.session.query(GroupUser.group_id).filter(GroupUser.user_id==user_id).all()
-
-
 def get_id_by_nickname(nickname):
     """
     根据nickname获取用户id
@@ -135,13 +170,16 @@ def get_id_by_nickname(nickname):
     """
     return db.session.query(User.user_id).filter(User.user_nick_name==nickname).first()[0]
 
+
 def get_recv_id_one(obj,id):
     """
-    chatlist的查询对象和发送id获取私聊的接收id
+    chatlist的查询对象和发送id获取私聊的接收id或群id
     :param obj:
     :param id:
     :return:
     """
+    if obj.type == 2:
+        return obj.group_id
     if obj.pri_user_id == id:
         return obj.sub_user_id
     else:
@@ -208,16 +246,8 @@ def get_special_id(list_special_no):
         return [query_user_id(x) for x in list_special_no]
 
 
-def query_one_uname(send_id,recv_id):
-    """
-    通过发送者及接收者id查询判断是否好友
-    :param send_id:
-    :param recv_id:
-    :return: Bool
-    """
-    if db.session.query(Relation).filter(Relation.pri_id==send_id,Relation.sub_id==recv_id,Relation.relation_type==1).first():
-        return True
-    return False
+def query_user_pic_name(send_user_id):
+    return db.session.query(User.pic_name).filter(User.user_id==send_user_id).first()[0]
 
 
 def query_user_self_nink_name(the_user_id):
