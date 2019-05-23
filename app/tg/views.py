@@ -67,13 +67,24 @@ def get_chat_records():
     # res = db.session.query(ChatRecords).join(User, ChatRecords.send_user_id == User.user_id).filter(
     #     ChatRecords.lid == lid).order_by(db.desc(ChatRecords.add_time)).limit(10).all()
 
-    # print(res)
+    print(res)
     # records = {'userinfo': subinfo, 'records': []}
     records = []
     for i in res:
         uinfo = User.query.filter_by(user_id=i.send_user_id).first().to_json()
         i.userinfo = uinfo
+        # 如果该条记录为文件
+        if i.content_type == 3:
+            if isinstance(i.content, bytes):
+                file_id = int(str(i.content, encoding='utf-8'))
+            else:
+                file_id = int(i.content)
+            # 获取文件信息
+            file_info = YlFiles.query.filter_by(file_id=file_id).first().to_json()
+            file_info['file_ext'] = file_info['file_name'].split('.')[-1]
+            i.file_info = file_info
         records.append(i.to_json())
+    #print(records)
     return json.dumps(records)
 
 

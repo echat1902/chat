@@ -159,14 +159,15 @@ class Relation(db.Model, DbCommon):
     add_time = db.Column(db.Integer)
 
 
-class GroupFiles(db.Model, DbCommon):
+class YlFiles(db.Model, DbCommon):
     """
-    群文件表
+    文件表
     """
-    __tablename__ = 'group_files'
+    __tablename__ = 'yl_files'
     file_id = db.Column(db.Integer, primary_key=True)
+    send_user_id = db.Column(db.Integer)
     group_id = db.Column(db.Integer)
-    user_id = db.Column(db.Integer)
+    recv_user_id = db.Column(db.Integer)
     file_name = db.Column(db.String(200))
     file_path = db.Column(db.String(300))
     file_type = db.Column(db.Integer)

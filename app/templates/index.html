@@ -11,11 +11,13 @@
 
     <link rel="stylesheet" type="text/css" href="/static/imagePreview/css/pictureViewer.css"/>
     <link rel="stylesheet" type="text/css" href="/static/css/index/processBar.css"/>
+    <link rel="stylesheet" href="/static/layui/css/layui.css">
     <style>
         .send_msg {
             width: 160px;
             height: 80px;
         }
+
         #add_friend_frame {
             width: 90%;
             height: 80%;
@@ -97,6 +99,7 @@
                 <!--头像插件-->
                 <div class="own_head am-dropdown-toggle"
                      style="background: url(/static/images/head/{{ data[0].pic_name }});background-size: contain;"></div>
+                <!-- 点击头像，取消am-dropdown-content的显示，改为显示user_info_show元素块
                 <div class="am-dropdown-content">
                     <div class="own_head_top">
                         <div class="own_head_top_text">
@@ -113,7 +116,7 @@
                             <a href=""><img src="/static/images/icon/head_2.png"/></a>
                         </div>
                     </div>
-                </div>
+                </div> -->
             </div>
             <!--三图标-->
             <div class="sidestrip_icon">
@@ -160,8 +163,9 @@
                 <ul class="user_list">
                     {% for i in data[1] %}
                         <li
-                            id={{ i.lid }}
-                            title={{ i.user_nick_name }}{{ i.group_name }}
+                                id={{ i.lid }}
+                                        title={{ i.user_nick_name }}{{ i.group_name }}
+                                uid={{ i.user_id }}{{ i.group_id }}
                         >
                             <div class="red_circle">1</div>
                             <div class="user_head"><img src=/static/images/head/{{ i.pic_name }}/></div>
@@ -339,7 +343,7 @@
                     <div class="extend" class="am-btn am-btn-success"
                          data-am-offcanvas="{target: '#doc-oc-demo3'}"></div>
                     <!-- 侧边栏内容 -->
-                    <div id="doc-oc-demo3" class="am-offcanvas" >
+                    <div id="doc-oc-demo3" class="am-offcanvas">
                         <div class="am-offcanvas-bar am-offcanvas-bar-flip" style="height: 680px;margin:auto">
                             <div class="am-offcanvas-content">
                                 <p><a href="http://music.163.com/#/song?id=385554" target="_blank">网易音乐</a></p>
@@ -380,7 +384,7 @@
         </div>
     </div>
 </div>
-
+<!-- 添加好友页面 -->
 <div id="add_friend_frame">
     <div id="input_area">
         <input id="input_yh" type="text" placeholder="输入用户名或易号"/>
@@ -398,7 +402,86 @@
         </div>
     </div>
 </div>
-
+<!-- 用户个人信息页 -->
+<style>
+    /* 取消添加好友页面的默认显示 */
+    #add_friend_frame{
+        display: none;
+    }
+    #user_info_show{
+        position: relative;
+        display: none;
+    }
+    #user_info_show .user_head_show{
+        width: 100px;
+        position: absolute;
+        top: 50px;
+        left: 20px;
+    }
+    #user_info_show .user_head_show img{
+        width: 100px;
+    }
+    #user_info_show .user_head_show button{
+        margin-top: 10px;
+        margin-left: 18px;
+    }
+    #user_info_show form{
+        width:400px;
+        float: right;
+        padding-top: 50px;
+        position: relative;
+    }
+    #user_info_show form input{
+        width:300px;
+    }
+    #user_info_show form button{
+        position: absolute;
+        right: 100px;
+    }
+</style>
+<div id="user_info_show">
+    <div class="user_head_show">
+        <img src="/static/images/head/{{ data[0].pic_name }}" alt="头像">
+        <button type="button" class="layui-btn" id="user_head_upload">上传</button>
+    </div>
+    <form class="layui-form layui-form-pane" method="post">
+        <div class="layui-form-item">
+            <label class="layui-form-item">用户名</label>
+            <div class="layui-form-block">
+                <input type="text" name="user_nick_name" lay-verify="required" value="{{ data[0].user_nick_name }}" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-item">手机号</label>
+            <div class="layui-form-block">
+                <input type="text" name="user_tel" lay-verify="phone"
+                    {% if data[0].user_tel %}
+                       value="{{ data[0].user_tel }}"
+                    {% else %}
+                       placeholder="暂未填写"
+                    {% endif %}
+                    autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-item">邮箱</label>
+            <div class="layui-form-block">
+                <input type="email" name="user_email" required lay-verify="email"
+                    {% if data[0].user_email %}
+                       value="{{ data[0].user_email }}"
+                    {% else %}
+                       placeholder="暂未填写"
+                    {% endif %}
+                    autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="user_info_form">保存</button>
+            </div>
+        </div>
+    </form>
+</div>
 <script type="text/javascript" src="/static/js/jquery-1.12.4.min.js"></script>
 <script type="text/javascript" src="/static/js/amazeui.min.js"></script>
 <script type="text/javascript" src="/static/js/zUI.js"></script>
@@ -408,12 +491,13 @@
 <script src="/static/webuploader/webuploader.min.js"></script>
 <script src="/static/imagePreview/js/pictureViewer.js"></script>
 <script type="text/javascript" src="//cdn.bootcss.com/socket.io/1.5.1/socket.io.min.js"></script>
+<script src="/static/layui/layui.js"></script>
 <script type="text/javascript">
     var now_time = (new Date()).getTime();
     pic_addr = '/static/images/head/';
     //点击添加好友按钮
     $('#add_button').click(function () {
-        index1=layer.open({
+        index1 = layer.open({
             type: 1,
             area: ['580px', '440px'],
             title: '添加好友',
@@ -463,40 +547,183 @@
             }
         }, 'json')
     });
+    //点击添加好友/群
+    $(document).on('click', '#add_friend_button', function () {
+        sub_id = $('#one_person').attr('obj_id');
+        pri_id = $('#user_id').val();
+        obj_type = $('#one_person').attr('obj_type');
+        $.post('/addFriend', {'sub_id': sub_id, 'pri_id': pri_id, 'obj_type': obj_type}, function (data) {
+            if (data.status == 1) {
+                layer.msg(data.msg, {time: 2000}, function () {
+                    console.log(data)
+                    layer.close(index1)
+                    str = '<li\n' +
+                        '         id=' + data.data.lid + '\n' +
+                        '         uid=' + data.data.group_id + '\n' +
+                        '         title=' + data.data.group_name + '\n' +
+                        '         >\n' +
+                        '           <div class="red_circle">1</div>\n' +
+                        '           <div class="user_head"><img src=/static/images/head/' + data.data.pic_name + ' /></div>\n' +
+                        '           <div class="user_text">\n' +
+                        '               <p class="user_name">\n' +
+                        '                   ' + data.data.group_name + '\n' +
+                        '               </p>\n' +
+                        '               <p class="user_message">' + data.data.content + '</p>\n' +
+                        '           </div>\n' +
+                        '           <div class="user_time">' + data.data.update_time + '</div>\n' +
+                        '      </li>';
+                    $('.user_list').append(str)
+                });
+            } else {
+                layer.msg(data.msg)
+            }
+        }, 'json')
+    });
+    //关闭右边聊天框
+    function close_talk() {
+        $('.windows_body,.windows_input').css('display', 'none')
+        $('.user_title').html('')
+    }
+
+    //打开右边聊天框
+    function open_talk() {
+        $('.windows_body,.windows_input').css('display', 'block')
+    }
+
+    //新的朋友列表
+    $('.friends_box:eq(0)').click(function () {
+        close_talk();
+        $('.user_title').html('新的朋友');
+        $('.friends_box').removeClass('user_active');
+        $(this).addClass('user_active');
+        $('.obj_list').css('display', 'block').html('');
+        var user_id = $('#user_id').val()
+        $.get('/friRequest?user_id=' + user_id, '', function (data) {
+            console.log(data)
+            $.each(data.data, function (k, v) {
+                str = '<div class="new_friend" id="' + v.pri_id + '">\n' +
+                    '                    <div class="uinfo">\n' +
+                    '                        <img src="' + pic_addr + v.pic_name + '"/>\n' +
+                    '                    </div>\n' +
+                    '                    <div class="uinfo">\n' +
+                    '                        <div style="margin: 5px 5px 10px 5px;">' + v.user_nick_name + '</div>\n' +
+                    '                        <div style="margin-left: 5px;">' + v.remark + '</div>\n' +
+                    '                    </div>\n' +
+                    '                    <div class="uinfo">\n' +
+                    '                        <input type="button" class="recv" value="接受"/>\n' +
+                    '                    </div>\n' +
+                    '                </div>';
+                $('.obj_list').append(str)
+            })
+        }, 'json')
+    });
+    //接受好友
+    $(document).on('click', '.recv', function () {
+        obj = $(this)
+        var pri_id = obj.parent().parent().attr('id')
+        var sub_id = $('#user_id').val();
+        $.post('/friRequest', {pri_id: pri_id, sub_id: sub_id}, function (data) {
+            console.log(data);
+            if (data.status == 1) {
+                layer.msg(data.msg, {time: 2000}, function () {
+                    obj.parent().parent().remove();
+                    str = '<li\n' +
+                        '         id=' + data.data.lid + '\n' +
+                        '         uid=' + data.data.pri_id + '\n' +
+                        '         title=' + data.data.user_nick_name + '\n' +
+                        '         >\n' +
+                        '           <div class="red_circle">1</div>\n' +
+                        '           <div class="user_head"><img src=/static/images/head/' + data.data.pic_name + ' /></div>\n' +
+                        '           <div class="user_text">\n' +
+                        '               <p class="user_name">\n' +
+                        '                   ' + data.data.user_nick_name + '\n' +
+                        '               </p>\n' +
+                        '               <p class="user_message">' + data.data.content + '</p>\n' +
+                        '           </div>\n' +
+                        '           <div class="user_time">' + data.data.update_time + '</div>\n' +
+                        '      </li>';
+                    $('.user_list').append(str)
+                })
+            } else {
+                layer.msg(data.msg)
+            }
+
+        }, 'json')
+    })
+    //点击用户头像，弹出个人信息页
+    $(".own_head").click(function () {
+       index2=layer.open({
+            type: 1,
+            area: ['580px', '440px'],
+            title: '个人信息',
+            content: $('#user_info_show')
+       })
+    });
+    //加载layui入口文件(包含头像上传，用户个人信息表单提交功能)
+    layui.config({
+        base: '/static/js/'
+    }).use('layui_index');
+    //如果个人信息页 手机号或邮箱为空，则跳过相应的前端验证
+    $("#user_info_show form button").click(function () {
+        var input_tel = $("[name=user_tel]");
+        var input_email = $("[name=user_email]");
+
+        if (input_tel.val() == ''){
+            input_tel.removeAttr('lay-verify');
+        }
+        if (input_email.val() == ''){
+            input_email.removeAttr('lay-verify');
+        }
+    });
+
     //三图标
     window.onload = function () {
-
         //生成聊天信息
         function create_chart(self, content) {
             pic_name = eval("'" + content["pic_name"] + "'"); // "我是unicode编码"
             user_nick_name = eval("'" + content["user_nick_name"] + "'"); // "我是unicode编码"
             send_msg = eval("'" + content["send_msg"] + "'"); // "我是unicode编码"
-            info = '<li class=' + self + '><img src="/static/images/head/' + pic_name + '" title="' + user_nick_name + '"><span>' + send_msg + '</span></li>'
-            $('#chatbox').append(info)
-        }
-        var msg_nums = [];
+            msg_type = content['msg_type'] ? content['msg_type'] : 1;
+            if (msg_type == 1) {
+                var info = '<li class=' + self + '><img src="/static/images/head/' + pic_name + '" title="' + user_nick_name + '"><span>' + send_msg + '</span></li>'
+                $('#chatbox').append(info)
+            } else if (msg_type == 2) {
+                var info = '<li class=' + self + '><img src="/static/images/head/' + pic_name + '" title="' + user_nick_name + '"><img src=">' + send_msg + '" /></li>'
+                $('#chatbox').append(info)
+            }else{
+                var img_addr = pic_addr + pic_name;
+                var file_name = content['file_name'];
+                var str_file_ext = content['file_ext'];
+                var filesize = get_file_size(content['file_size']);
+                var content_type = 3;
+                file_show('other', img_addr, file_name, str_file_ext, 2, filesize, content_type);
+            }
 
+        }
+
+        var msg_nums = [];
+        var boo = true;
         //等待服务器推送消息
-        namespace = '/flasksocketio';
+        var namespace = '/flasksocketio';
         var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + namespace);
 
         socket.on('server_response', function (res) {
             res = JSON.parse(res);
             lid = res.lid;
-            num_area = $('#'+lid).children('div').eq(0);
-            $('#'+lid).children('div').eq(2).children('p').eq(1).html(res.send_msg);
-            if($('#'+lid).hasClass('user_active')){
+            num_area = $('#' + lid).children('div').eq(0);
+            $('#' + lid).children('div').eq(2).children('p').eq(1).html(res.send_msg);
+            if ($('#' + lid).hasClass('user_active')) {
                 msg_nums[lid] = 0;
-                num_area.css('display','none');
+                num_area.css('display', 'none');
                 if (res.user_nick_name != "{{data[0].user_nick_name}}") {
                     create_chart('other', res);
                     send_msg.value = '';
                 }
-            }else{
-                num_area.css('display','block');
-                if(msg_nums[lid]) {
-                    msg_nums[lid] = msg_nums[lid]+1
-                }else{
+            } else {
+                num_area.css('display', 'block');
+                if (msg_nums[lid]) {
+                    msg_nums[lid] = msg_nums[lid] + 1
+                } else {
                     msg_nums[lid] = 1;
                 }
                 num_area.html(msg_nums[lid]);
@@ -513,16 +740,20 @@
 
         //获取聊天记录
         $(document).on('click', '.user_list li', function () {
-            $('#talkbox').css('display','block');
+            open_talk();
+            $('#talkbox').css('display', 'block');
             lid = $(this).attr("id");
+            $('.windows_body').attr('lid', lid);
             user_title = $(this).attr('title');
             $(this).addClass('user_active');
             $(this).siblings().removeClass('user_active');
-            $('#'+lid).children('div').eq(0).css('display','none');
+            $('#' + lid).children('div').eq(0).css('display', 'none');
             msg_nums[lid] = 0;
             $('#chatbox').html('');
+            b();
             //获取聊天记录
             $.get('/get_chat_records?user_id=' + user_id + '&lid=' + lid, function (data) {
+                console.log(data)
                 $('.windows_top_box .user_title').html(user_title);
                 $.each(data, function (k, v) {
                     if (v.send_user_id == $('#user_id').val()) {
@@ -530,31 +761,23 @@
                     } else {
                         u = 'other'
                     }
-                    info = '<li class=' + u + '><img src="/static/images/head/' + v.userinfo.pic_name + '" title="' + v.userinfo.user_nick_name + '"><span>' + v.content + '</span></li>'
+                    img_addr = pic_addr + v.userinfo.pic_name;
+                    if (v.content_type == 1) {
+                        var info = '<li class=' + u + ' utype=' + v.content_type + ' ><img src="' + img_addr + '" title="' + v.userinfo.user_nick_name + '"><span>' + v.content + '</span></li>'
+                    } else if (v.content_type == 2) {
+                        info = '<li class=' + u + ' utype=' + v.content_type + ' ><img  src="' + img_addr + '" title="' + v.userinfo.user_nick_name + '"><img class="send_msg" src="' + v.content + '" /></li>'
+                    } else {
+                        file_name = v.file_info.file_name;
+                        str_file_ext = v.file_info.file_ext;
+                        //显示文件大小
+                        filesize = get_file_size(v.file_info.file_size);
+                        file_show(u, img_addr, file_name, str_file_ext, 2, filesize, v.content_type);
+                    }
                     $('#chatbox').append(info)
-
-
                 })
             }, 'json')
         });
 
-
-        var j = 0;
-        var task_id = WebUploader.Base.guid(); // 产生文件唯一标识符task_id
-        var uploader = WebUploader.create({
-            swf: './static/webuploader/Uploader.swf',
-            server: '/file/upload/' + now_time, // 上传分片地址
-            pick: '#picker',
-            auto: true,
-            chunked: true,
-            chunkSize: 20 * 1024 * 1024,
-            chunkRetry: 3,
-            threads: 1,
-            duplicate: true,
-            formData: { // 上传分片的http请求中一同携带的数据
-                task_id: task_id,
-            },
-        });
         arr_images = ['png', 'jpg', 'jpeg', 'jpeg', 'gif'];
         file_exts = ['avi', 'css', 'docx', 'html', 'ini', 'mp3', 'pptx', 'rar', 'xls', 'xlxs', 'pdf', 'ppt', 'txt', 'zip'];//文件后缀
         file_ext = true;
@@ -573,100 +796,164 @@
             return filesize;
         }
 
-        uploader.on('fileQueued', function (file) {
-            a = jQuery.inArray(file.ext, arr_images);
-            if (a != -1) {	//如果是图片
-                file_ext = false;
-            } else {
-                file_ext = true;
-            }
-            //如果上传的不是图片
-            if (file_ext) {
-                chat.append('<li class="me"><img src="' + '/static/images/own_head.jpg' + '"><i></i></li>');
-                $("#chatbox li").last().children('i').load('/static/view/processBar.html', function () {
-                    //获取文件名
-                    file_name = file.name;
-                    str_file_ext = file.ext;
-                    is_in = jQuery.inArray(str_file_ext, file_exts);
-                    if (is_in == -1) {
-                        file_icon = 'c.png'
-                    } else {
-                        file_icon = str_file_ext + '.png'
-                    }
-                    $(' .left_text').last().children('k').html(file_name);
-                    $('.file_frame .right_file').last().children('img').attr('src', '/static/images/file_icon/' + file_icon);
-                    //filename = file.name;
+        // 文件展示
+        function file_show(obj, img_addr, file_name, str_file_ext, is_process, file_size = 0, content_type) {
+            chat.append('<li class=' + obj + ' utype=' + content_type + ' ><img src="' + img_addr + '"><i></i></li>');
+            $("#chatbox li").last().children('i').load('/static/view/processBar.html', function () {
+                is_in = jQuery.inArray(str_file_ext, file_exts);
+                if (is_in == -1) {
+                    file_icon = 'c.png'
+                } else {
+                    file_icon = str_file_ext + '.png'
+                }
+                $(' .left_text').last().children('k').html(file_name);
+                $('.file_frame .right_file').last().children('img').attr('src', '/static/images/file_icon/' + file_icon);
+                //filename = file.name;
+                if (is_process == 1) {
                     $('#progress').show();
                     $('.progress-bar').css('width', '0%');
                     $('.progress-bar').text('0%');
                     $('.progress-bar').removeClass('progress-bar-danger progress-bar-success');
-                    //$('.progress-bar').addClass('active progress-bar-striped');
+                } else {
+                    $('.middle_text').last().html(file_size)
+                }
+                //让滚动条到最底部
+                chat = $('#chatbox');
+                scrollTop = chat[0].scrollHeight;
+                chat.parent().scrollTop(scrollTop);
+            });
+        }
 
-                    //让滚动条到最底部
-                    chat = $('#chatbox');
-                    scrollTop = chat[0].scrollHeight;
-                    chat.parent().scrollTop(scrollTop);
+         // 发送文件时的消息格式
+        function file_format(obj_file) {
+            //最后一个聊天对象
+            var chat_obj = $('#chatbox li').last();
+            var content = {
+                'lid':$('.windows_body').attr('lid'),
+                'send_user_id':$('#user_id').val(),
+                'recv_user_id':chat_obj.attr('xt'),
+                'file_name' :obj_file.name,
+                'file_path':'/static/upload/'+now_time+'/',
+                'msg_type':chat_obj.attr('utype'),
+                'file_size':obj_file.size
+            };
+            console.log(content);
+            return content;
+        }
+
+        var j = 0;
+        var task_id = WebUploader.Base.guid(); // 产生文件唯一标识符task_id
+        function b() {
+            if (boo) {
+                uploader = WebUploader.create({
+                    swf: './static/webuploader/Uploader.swf',
+                    server: '/file/upload/' + now_time, // 上传分片地址
+                    pick: '#picker',
+                    auto: true,
+                    chunked: true,
+                    chunkSize: 20 * 1024 * 1024,
+                    chunkRetry: 3,
+                    threads: 1,
+                    duplicate: true,
+                    formData: { // 上传分片的http请求中一同携带的数据
+                        task_id: task_id,
+                    },
                 });
 
+                uploader.on('fileQueued', function (file) {
+                    file_ext = jQuery.inArray(file.ext, arr_images);
+                    if (file_ext != -1) {	//如果是图片
+                        file_ext = false;
+                    } else {
+                        file_ext = true;
+                    }
+                    //如果上传的不是图片,是文件
+                    if (file_ext) {
+                        var obj = "me";
+                        var img_addr = pic_addr + "{{data[0].pic_name}}";
+                        //获取文件名
+                        var file_name = file.name;
+                        var str_file_ext = file.ext;
+                        //展示文件
+                        file_show(obj, img_addr, file_name, str_file_ext, 1, 0, 3)
+                    }
+                });
+                uploader.on('startUpload', function () { // 开始上传时，调用该方法
+
+                });
+
+                uploader.on('uploadProgress', function (file, percentage) { // 一个分片上传成功后，调用该方法
+                    $('.progress-bar').css('width', percentage * 100 - 1 + '%');
+                    //$('.progress-bar').text(Math.floor(percentage * 100 - 1) + '%');
+                });
+
+                uploader.on('uploadSuccess', function (file) { // 整个文件的所有分片都上传成功后，调用该方法
+
+                    var data = {'task_id': task_id, 'filename': file.name, 'now_time': now_time};
+                    $.get('/file/merge', data, function () {
+                        if (file_ext) {
+
+                        }
+                    }, 'json');
+                    if (file_ext) {
+                        $('.progress-bar').css('width', '100%');
+                        $('.progress-bar').text('100%');
+                        $('.progress-bar').addClass('progress-bar-success');
+                        $('.progress-bar').text('上传成功');
+                        //关闭进度条
+                        $('#progress').remove();
+                        //显示文件大小
+                        filesize = get_file_size(file.size);
+                        $(' .middle_text').last().html(filesize);
+                        //发送文件
+                        msg = file_format(file)
+                    } else {
+                        file_info = file.source.source;
+                        var reader = new FileReader();
+                        //将文件以Data URL形式读入页面
+                        reader.readAsDataURL(file_info);
+                        reader.onload = function (e) {
+                            $('#chatbox').append(
+                                '<li class="me" utype="' + 2 + '"><img src="' +
+                                '/static/images/head/{{data[0].pic_name}}">' +
+                                '<img class="send_msg" src="' + this.result + '" />' + '</li>'
+                            );
+                            //让滚动条到最底部
+                            chat = $('#chatbox');
+                            scrollTop = chat[0].scrollHeight;
+                            chat.parent().scrollTop(scrollTop);
+
+                            //发送文件
+                            //用户id
+                            var user_id = $('#user_id').val();
+                            lid = $('.user_active').attr('id')
+                            content = {
+                                'lid': lid,
+                                'send_user_id':user_id,
+                                'send_msg': this.result,
+                                'msg_type': 1
+                            }
+                            socket.emit('imessage', content);
+                        }
+                    }
+
+                });
+
+                uploader.on('uploadError', function (file) { // 上传过程中发生异常，调用该方法
+                    $('.progress-bar').css('width', '100%');
+                    $('.progress-bar').text('100%');
+                    $('.progress-bar').addClass('progress-bar-danger');
+                    $('.progress-bar').text('上传失败');
+                });
+
+                uploader.on('uploadComplete', function (file) { // 上传结束，无论文件最终是否上传成功，该方法都会被调用
+                    $('.progress-bar').removeClass('active progress-bar-striped');
+                });
+
+                boo = false
             }
-        });
-        uploader.on('startUpload', function () { // 开始上传时，调用该方法
+        }
 
-        });
-
-        uploader.on('uploadProgress', function (file, percentage) { // 一个分片上传成功后，调用该方法
-            $('.progress-bar').css('width', percentage * 100 - 1 + '%');
-            //$('.progress-bar').text(Math.floor(percentage * 100 - 1) + '%');
-        });
-
-        uploader.on('uploadSuccess', function (file) { // 整个文件的所有分片都上传成功后，调用该方法
-
-            var data = {'task_id': task_id, 'filename': file.name, 'now_time': now_time};
-            $.get('/file/merge', data, function () {
-                if (file_ext) {
-
-                }
-            }, 'json');
-            if (file_ext) {
-                $('.progress-bar').css('width', '100%');
-                $('.progress-bar').text('100%');
-                $('.progress-bar').addClass('progress-bar-success');
-                $('.progress-bar').text('上传成功');
-                //关闭进度条
-                $('#progress').remove();
-                //显示文件大小
-                filesize = get_file_size(file.size);
-                $(' .middle_text').last().html(filesize);
-            } else {
-                file_info = file.source.source;
-                var reader = new FileReader();
-                //将文件以Data URL形式读入页面
-                reader.readAsDataURL(file_info);
-                reader.onload = function (e) {
-                    $('#chatbox').append(
-                        '<li class="me"><img src="' +
-                        '/static/images/head/{{data[0].pic_name}}">' +
-                        '<img class="send_msg" src="' + this.result + '" />' + '</li>'
-                    );
-                    //让滚动条到最底部
-                    chat = $('#chatbox');
-                    scrollTop = chat[0].scrollHeight;
-                    chat.parent().scrollTop(scrollTop);
-                }
-            }
-
-        });
-
-        uploader.on('uploadError', function (file) { // 上传过程中发生异常，调用该方法
-            $('.progress-bar').css('width', '100%');
-            $('.progress-bar').text('100%');
-            $('.progress-bar').addClass('progress-bar-danger');
-            $('.progress-bar').text('上传失败');
-        });
-
-        uploader.on('uploadComplete', function (file) { // 上传结束，无论文件最终是否上传成功，该方法都会被调用
-            $('.progress-bar').removeClass('active progress-bar-striped');
-        });
         $('#progress').hide();
         //发送消息
         $('#send').click(function () {
@@ -683,9 +970,12 @@
                 lid = $('.user_active').attr('id')
                 chat = $('#chatbox');
                 talk = $('#talkbox');
-                namespace = '/flasksocketio';
-                var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + namespace);
-                content = {'lid':lid,'user_nick_name': user_nick_name, 'pic_name': pic_name, 'send_msg': msg.html()}
+                content = {
+                    'lid': lid,
+                    'send_user_id':user_id,
+                    'send_msg': msg.html(),
+                    'msg_type': 1
+                }
                 socket.emit('imessage', content);
                 create_chart('me', content);
                 msg.html('');
@@ -702,16 +992,20 @@
                 si1.style.background = "url(/static/images/icon/head_2_1.png) no-repeat";
                 si2.style.background = "";
                 si3.style.background = "";
+                $('.obj_list').css('display', 'none')
             };
             si2.onclick = function () {
                 si2.style.background = "url(/static/images/icon/head_3_1.png) no-repeat";
                 si1.style.background = "";
                 si3.style.background = "";
+                close_talk();
             };
             si3.onclick = function () {
                 si3.style.background = "url(/static/images/icon/head_4_1.png) no-repeat";
                 si1.style.background = "";
                 si2.style.background = "";
+                close_talk();
+                $('.obj_list').css('display', 'none')
             };
         };
         a();

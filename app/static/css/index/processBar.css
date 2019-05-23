@@ -1,9 +1,16 @@
-.file_frame{
-        width:215px;
-        height:100px;
-        background: #fff;
-        margin-right: 40px;
-        border: solid 1px #B2B2B2;
+.me .file_frame{
+    width:215px;
+    height:100px;
+    background: #fff;
+    border: solid 1px #B2B2B2;
+    margin-right: 40px;
+}
+.other .file_frame{
+    width:215px;
+    height:100px;
+    background: #fff;
+    border: solid 1px #B2B2B2;
+    margin-left: 40px;
 }
 .left_text{
     width:130px;
