@@ -463,6 +463,76 @@
             }
         }, 'json')
     });
+    //关闭右边聊天框
+    function close_talk() {
+        $('.windows_body,.windows_input').css('display', 'none')
+        $('.user_title').html('')
+    }
+
+    //打开右边聊天框
+    function open_talk() {
+        $('.windows_body,.windows_input').css('display', 'block')
+    }
+
+    //新的朋友列表
+    $('.friends_box:eq(0)').click(function () {
+        close_talk();
+        $('.user_title').html('新的朋友');
+        $('.friends_box').removeClass('user_active');
+        $(this).addClass('user_active');
+        $('.obj_list').css('display', 'block').html('');
+        var user_id = $('#user_id').val()
+        $.get('/friRequest?user_id=' + user_id, '', function (data) {
+            console.log(data)
+            $.each(data.data, function (k, v) {
+                str ='<div class="new_friend" id="'+v.pri_id+'">\n' +
+                    '                    <div class="uinfo">\n' +
+                    '                        <img src="'+pic_addr+v.pic_name+'"/>\n' +
+                    '                    </div>\n' +
+                    '                    <div class="uinfo">\n' +
+                    '                        <div style="margin: 5px 5px 10px 5px;">'+v.user_nick_name+'</div>\n' +
+                    '                        <div style="margin-left: 5px;">'+v.remark+'</div>\n' +
+                    '                    </div>\n' +
+                    '                    <div class="uinfo">\n' +
+                    '                        <input type="button" class="recv" value="接受"/>\n' +
+                    '                    </div>\n' +
+                    '                </div>';
+                $('.obj_list').append(str)
+            })
+        }, 'json')
+    });
+    //接受好友
+    $(document).on('click','.recv',function () {
+        obj = $(this)
+        var pri_id = obj.parent().parent().attr('id')
+        var sub_id = $('#user_id').val();
+        $.post('/friRequest',{pri_id:pri_id,sub_id:sub_id},function (data) {
+            console.log(data);
+            if(data.status == 1){
+                layer.msg(data.msg,{time:2000},function () {
+                    obj.parent().parent().remove();
+                    str = '<li\n' +
+                    '         id='+data.data.lid+'\n' +
+                    '         title='+data.data.user_nick_name+'\n' +
+                    '         >\n' +
+                    '           <div class="red_circle">1</div>\n' +
+                    '           <div class="user_head"><img src=/static/images/head/'+data.data.pic_name+' /></div>\n' +
+                    '           <div class="user_text">\n' +
+                    '               <p class="user_name">\n' +
+                    '                   '+data.data.user_nick_name+'\n' +
+                    '               </p>\n' +
+                    '               <p class="user_message">'+data.data.content+'</p>\n' +
+                    '           </div>\n' +
+                    '           <div class="user_time">'+data.data.update_time+'</div>\n' +
+                    '      </li>';
+                    $('.user_list').append(str)
+                })
+            }else{
+                layer.msg(data.msg)
+            }
+
+        },'json')
+    })
     //三图标
     window.onload = function () {
 
@@ -518,6 +588,7 @@
 
         //获取聊天记录
         $(document).on('click', '.user_list li', function () {
+            open_talk();
             $('#talkbox').css('display', 'block');
             lid = $(this).attr("id");
             user_title = $(this).attr('title');
@@ -739,11 +810,13 @@
                 si2.style.background = "url(/static/images/icon/head_3_1.png) no-repeat";
                 si1.style.background = "";
                 si3.style.background = "";
+                close_talk();
             };
             si3.onclick = function () {
                 si3.style.background = "url(/static/images/icon/head_4_1.png) no-repeat";
                 si1.style.background = "";
                 si2.style.background = "";
+                close_talk();
             };
         };
         a();
