@@ -134,5 +134,5 @@ def gen_pic_path(pic_name):
 
     this_dir = os.path.dirname(__file__)
     base_dir = os.path.dirname(this_dir)
-    pic_path = os.path.join(base_dir, 'static\images\head', pic_name)
+    pic_path = os.path.join(base_dir, 'static/images/head', pic_name)
     return pic_path
