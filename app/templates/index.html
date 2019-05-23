@@ -670,16 +670,6 @@
             send_msg = eval("'" + content["send_msg"] + "'"); // "我是unicode编码"
             msg_type = content['msg_type'] ? content['msg_type'] : 1;
             if (msg_type == 1) {
-<<<<<<< HEAD
-                info = '<li class=' + self + '><img src="/static/images/head/' + pic_name + '" title="' + user_nick_name + '"><span>' + send_msg + '</span></li>'
-            }else if (msg_type == 2) {
-                info = '<li class=' + self + '><img src="/static/images/head/' + pic_name + '" title="' + user_nick_name + '"><img src=">' + send_msg + '" /></li>'
-            }
-            $('#chatbox').append(info)
-        }
-        var msg_nums = [];
-         var boo = true;
-=======
                 var info = '<li class=' + self + '><img src="/static/images/head/' + pic_name + '" title="' + user_nick_name + '"><span>' + send_msg + '</span></li>'
                 $('#chatbox').append(info)
             } else if (msg_type == 2) {
@@ -698,7 +688,6 @@
 
         var msg_nums = [];
         var boo = true;
->>>>>>> 83b7ecf94eb8456f47b57608547f8051b721c01d
         //等待服务器推送消息
         var namespace = '/flasksocketio';
         var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + namespace);
@@ -736,10 +725,7 @@
 
         //获取聊天记录
         $(document).on('click', '.user_list li', function () {
-<<<<<<< HEAD
-=======
             open_talk();
->>>>>>> 83b7ecf94eb8456f47b57608547f8051b721c01d
             $('#talkbox').css('display', 'block');
             lid = $(this).attr("id");
             $('.windows_body').attr('lid', lid);
@@ -762,25 +748,15 @@
                     }
                     img_addr = pic_addr + v.userinfo.pic_name;
                     if (v.content_type == 1) {
-<<<<<<< HEAD
-                        var info = '<li class=' + u + '><img src="' + img_addr + '" title="' + v.userinfo.user_nick_name + '"><span>' + v.content + '</span></li>'
-                    } else if (v.content_type == 2) {
-                        info = '<li class=' + u + '><img src="' + img_addr + '" title="' + v.userinfo.user_nick_name + '"><img src="' + v.content + '" /></li>'
-=======
                         var info = '<li class=' + u + ' utype=' + v.content_type + ' ><img src="' + img_addr + '" title="' + v.userinfo.user_nick_name + '"><span>' + v.content + '</span></li>'
                     } else if (v.content_type == 2) {
                         info = '<li class=' + u + ' utype=' + v.content_type + ' ><img  src="' + img_addr + '" title="' + v.userinfo.user_nick_name + '"><img class="send_msg" src="' + v.content + '" /></li>'
->>>>>>> 83b7ecf94eb8456f47b57608547f8051b721c01d
                     } else {
                         file_name = v.file_info.file_name;
                         str_file_ext = v.file_info.file_ext;
                         //显示文件大小
                         filesize = get_file_size(v.file_info.file_size);
-<<<<<<< HEAD
-                        file_show(u, img_addr, file_name, str_file_ext, 2,filesize);
-=======
                         file_show(u, img_addr, file_name, str_file_ext, 2, filesize, v.content_type);
->>>>>>> 83b7ecf94eb8456f47b57608547f8051b721c01d
                     }
                     $('#chatbox').append(info)
                 })
@@ -805,15 +781,9 @@
             return filesize;
         }
 
-<<<<<<< HEAD
-         // 文件展示
-        function file_show(obj, img_addr, file_name, str_file_ext, is_process,file_size=0) {
-            chat.append('<li class=' + obj + '><img src="' + img_addr + '"><i></i></li>');
-=======
         // 文件展示
         function file_show(obj, img_addr, file_name, str_file_ext, is_process, file_size = 0, content_type) {
             chat.append('<li class=' + obj + ' utype=' + content_type + ' ><img src="' + img_addr + '"><i></i></li>');
->>>>>>> 83b7ecf94eb8456f47b57608547f8051b721c01d
             $("#chatbox li").last().children('i').load('/static/view/processBar.html', function () {
                 is_in = jQuery.inArray(str_file_ext, file_exts);
                 if (is_in == -1) {
@@ -829,11 +799,8 @@
                     $('.progress-bar').css('width', '0%');
                     $('.progress-bar').text('0%');
                     $('.progress-bar').removeClass('progress-bar-danger progress-bar-success');
-<<<<<<< HEAD
-                }else{
-=======
+
                 } else {
->>>>>>> 83b7ecf94eb8456f47b57608547f8051b721c01d
                     $('.middle_text').last().html(file_size)
                 }
                 //让滚动条到最底部
@@ -842,8 +809,6 @@
                 chat.parent().scrollTop(scrollTop);
             });
         }
-<<<<<<< HEAD
-=======
 
          // 发送文件时的消息格式
         function file_format(obj_file) {
@@ -861,7 +826,6 @@
             console.log(content);
             return content;
         }
->>>>>>> 83b7ecf94eb8456f47b57608547f8051b721c01d
 
         var j = 0;
         var task_id = WebUploader.Base.guid(); // 产生文件唯一标识符task_id
@@ -897,11 +861,7 @@
                         var file_name = file.name;
                         var str_file_ext = file.ext;
                         //展示文件
-<<<<<<< HEAD
-                        file_show(obj, img_addr, file_name, str_file_ext, 1)
-=======
                         file_show(obj, img_addr, file_name, str_file_ext, 1, 0, 3)
->>>>>>> 83b7ecf94eb8456f47b57608547f8051b721c01d
                     }
                 });
                 uploader.on('startUpload', function () { // 开始上传时，调用该方法
@@ -914,56 +874,6 @@
                 });
 
                 uploader.on('uploadSuccess', function (file) { // 整个文件的所有分片都上传成功后，调用该方法
-<<<<<<< HEAD
-
-                    var data = {'task_id': task_id, 'filename': file.name, 'now_time': now_time};
-                    $.get('/file/merge', data, function () {
-                        if (file_ext) {
-
-                        }
-                    }, 'json');
-                    if (file_ext) {
-                        $('.progress-bar').css('width', '100%');
-                        $('.progress-bar').text('100%');
-                        $('.progress-bar').addClass('progress-bar-success');
-                        $('.progress-bar').text('上传成功');
-                        //关闭进度条
-                        $('#progress').remove();
-                        //显示文件大小
-                        filesize = get_file_size(file.size);
-                        $(' .middle_text').last().html(filesize);
-                    } else {
-                        file_info = file.source.source;
-                        var reader = new FileReader();
-                        //将文件以Data URL形式读入页面
-                        reader.readAsDataURL(file_info);
-                        reader.onload = function (e) {
-                            $('#chatbox').append(
-                                '<li class="me"><img src="' +
-                                '/static/images/head/{{data[0].pic_name}}">' +
-                                '<img class="send_msg" src="' + this.result + '" />' + '</li>'
-                            );
-                            //让滚动条到最底部
-                            chat = $('#chatbox');
-                            scrollTop = chat[0].scrollHeight;
-                            chat.parent().scrollTop(scrollTop);
-                        }
-                    }
-
-                });
-
-                uploader.on('uploadError', function (file) { // 上传过程中发生异常，调用该方法
-                    $('.progress-bar').css('width', '100%');
-                    $('.progress-bar').text('100%');
-                    $('.progress-bar').addClass('progress-bar-danger');
-                    $('.progress-bar').text('上传失败');
-                });
-
-                uploader.on('uploadComplete', function (file) { // 上传结束，无论文件最终是否上传成功，该方法都会被调用
-                    $('.progress-bar').removeClass('active progress-bar-striped');
-                });
-
-=======
 
                     var data = {'task_id': task_id, 'filename': file.name, 'now_time': now_time};
                     $.get('/file/merge', data, function () {
@@ -1015,6 +925,9 @@
 
                 });
 
+
+
+
                 uploader.on('uploadError', function (file) { // 上传过程中发生异常，调用该方法
                     $('.progress-bar').css('width', '100%');
                     $('.progress-bar').text('100%');
@@ -1025,8 +938,6 @@
                 uploader.on('uploadComplete', function (file) { // 上传结束，无论文件最终是否上传成功，该方法都会被调用
                     $('.progress-bar').removeClass('active progress-bar-striped');
                 });
-
->>>>>>> 83b7ecf94eb8456f47b57608547f8051b721c01d
                 boo = false
             }
         }
