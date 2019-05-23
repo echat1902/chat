@@ -6,7 +6,7 @@
 import datetime
 import os
 
-from flask import redirect, render_template, request
+from flask import redirect, render_template, request, jsonify
 
 from app import db
 from app.common.funs import chkLogin, ret_sucess, ret_error
@@ -31,7 +31,7 @@ def user_info():
     user = User.query.filter_by(user_no=user_no).first()
     if request.method == 'GET':
         # 返回用户个人信息
-        return render_template("user_info.html", user=user)
+        return render_template("index.html", user=user)
     else:
         # 修改用户个人信息
         user.user_nick_name = request.form['user_nick_name']
@@ -42,25 +42,43 @@ def user_info():
         if res != True:
             return ret_error(res)
 
-        # 获取头像图片
-        pic = request.files['pic']
-        if pic.filename != user.pic_name:
-            # 如果头像图片名改变，则将新头像存入服务器中
-            pic_name = gen_pic_name(pic)
-            if pic_name == '':
-                # 如果生成文件名为空，则该文件不符合要求的格式
-                return ret_error("请选择jpg或png格式的图片")
-
-            pic_path = gen_pic_path(pic_name)
-            pic.save(pic_path)
-            # 修改用户头像图片目录及图片名
-            user.user_head_pic = pic_path
-            user.pic_name = pic_name
-
         # 保存用户信息
         db.session.add(user)
 
         return ret_sucess("修改成功")
+
+
+@zsg.route('/user_head_upload', methods=['POST'])
+def user_head_upload():
+    """
+    头像上传视图函数
+    :return: 成功code:1/失败code:0
+    """
+
+    # 检查用户是否登录
+    user_no = chkLogin()
+    if not user_no:
+        return redirect('/login')
+
+    user = User.query.filter_by(user_no=user_no).first()
+
+    if 'file' in request.files:
+        # 获取上传的头像
+        pic = request.files['file']
+        pic_name = gen_pic_name(pic)
+        if pic_name == '':
+            # 如果生成文件名为空，则该文件不是图片
+            return jsonify({'code': 0, 'msg': '请选择一张图片'})
+
+        pic_path = gen_pic_path(pic_name)
+        # 保存图片
+        pic.save(pic_path)
+        # 修改用户头像图片目录及图片名
+        user.user_head_pic = pic_path
+        user.pic_name = pic_name
+        db.session.add(user)
+
+    return jsonify({'code': 1, 'msg': '上传成功'})
 
 
 def info_check(name, tel, email):
@@ -96,7 +114,7 @@ def gen_pic_name(pic):
     # 头像文件校验
     res = FormCheck.pic_check(ext)
     if not res:
-        # 用户上传的头像不是.jpg或.png格式，返回空字符串
+        # 用户上传的文件不是图片格式，返回空字符串
         return ''
 
     ftime = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")
@@ -113,5 +131,5 @@ def gen_pic_path(pic_name):
 
     this_dir = os.path.dirname(__file__)
     base_dir = os.path.dirname(this_dir)
-    pic_path = os.path.join(base_dir, 'static/images/head', pic_name)
+    pic_path = os.path.join(base_dir, 'static\images\head', pic_name)
     return pic_path
