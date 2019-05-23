@@ -27,54 +27,54 @@ def add_fri():
     return '进入群成功'
 
 
-@socketio.on('imessage', namespace='/flasksocketio')
-def test_message(message):
-    print("111")
-    send_id = get_id_by_nickname(message["user_nick_name"])
-    obj = get_obj_by_lid(message["lid"])
-    int_time = time.time()
-    if obj.type == 1:  # 私聊
-        recv_id = get_recv_id_one(obj, send_id)
-        update_chatlist_one(obj, send_id, recv_id, message["send_msg"], int_time)
-        record_dict = {
-            "lid": message["lid"],
-            "send_user_id": send_id,
-            "group_id": 0,
-            "recv_user_id": str(recv_id),
-            "content": message["send_msg"].encode(),
-            "content_type": 1,
-            "add_time": int_time
-        }
-    else:  # 群聊
-        group_id = obj.group_id
-        update_chatlist_group(obj, send_id, message["send_msg"], int_time)
-        record_dict = {
-            "lid": message["lid"],
-            "send_user_id": send_id,
-            "group_id": group_id,
-            "content": message["send_msg"].encode(),
-            "content_type": 1,
-            "add_time": int_time
-        }
-    ChatRecords.add_one(**record_dict)
-    socketio.emit('server_response', json.dumps(message), room=message['lid'],namespace='/flasksocketio')
-
-
-@socketio.on('join room', namespace='/flasksocketio')
-def test_connect(data):
-    lid = data['lid']
-    join_room(lid)
-
-
-
-@socketio.on('disconnect', namespace='/chat')
-def test_disconnect(data):
-    lid = data['lid']
-    leave_room(lid)
-
-
-
-
+# @socketio.on('imessage', namespace='/flasksocketio')
+# def test_message(message):
+#     print("111")
+#     send_id = get_id_by_nickname(message["user_nick_name"])
+#     obj = get_obj_by_lid(message["lid"])
+#     int_time = time.time()
+#     if obj.type == 1:  # 私聊
+#         recv_id = get_recv_id_one(obj, send_id)
+#         update_chatlist_one(obj, send_id, recv_id, message["send_msg"], int_time)
+#         record_dict = {
+#             "lid": message["lid"],
+#             "send_user_id": send_id,
+#             "group_id": 0,
+#             "recv_user_id": str(recv_id),
+#             "content": message["send_msg"].encode(),
+#             "content_type": 1,
+#             "add_time": int_time
+#         }
+#     else:  # 群聊
+#         group_id = obj.group_id
+#         update_chatlist_group(obj, send_id, message["send_msg"], int_time)
+#         record_dict = {
+#             "lid": message["lid"],
+#             "send_user_id": send_id,
+#             "group_id": group_id,
+#             "content": message["send_msg"].encode(),
+#             "content_type": 1,
+#             "add_time": int_time
+#         }
+#     ChatRecords.add_one(**record_dict)
+#     socketio.emit('server_response', json.dumps(message), room=message['lid'],namespace='/flasksocketio')
+#
+#
+# @socketio.on('join room', namespace='/flasksocketio')
+# def test_connect(data):
+#     lid = data['lid']
+#     join_room(lid)
+#
+#
+#
+# @socketio.on('disconnect', namespace='/chat')
+# def test_disconnect(data):
+#     lid = data['lid']
+#     leave_room(lid)
+#
+#
+#
+#
 
 
 
