@@ -161,7 +161,7 @@ class Relation(db.Model, DbCommon):
 
 class YlFiles(db.Model, DbCommon):
     """
-    群文件表
+    文件表
     """
     __tablename__ = 'yl_files'
     file_id = db.Column(db.Integer, primary_key=True)
