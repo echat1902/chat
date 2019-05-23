@@ -540,21 +540,6 @@
         $.post('/addFriend', {'sub_id': sub_id, 'pri_id': pri_id, 'obj_type': obj_type}, function (data) {
             if (data.status == 1) {
                 layer.msg(data.msg, {time: 2000}, function () {
-                    layer.close(index1)
-                });
-            } else {
-                lay.msg(data.msg)
-            }
-        }, 'json')
-    });
-    //点击添加好友/群
-    $(document).on('click', '#add_friend_button', function () {
-        sub_id = $('#one_person').attr('obj_id');
-        pri_id = $('#user_id').val();
-        obj_type = $('#one_person').attr('obj_type');
-        $.post('/addFriend', {'sub_id': sub_id, 'pri_id': pri_id, 'obj_type': obj_type}, function (data) {
-            if (data.status == 1) {
-                layer.msg(data.msg, {time: 2000}, function () {
                     console.log(data)
                     layer.close(index1)
                     str = '<li\n' +
