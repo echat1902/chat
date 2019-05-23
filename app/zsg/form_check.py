@@ -79,11 +79,11 @@ class FormCheck():
     def pic_check(ext):
         """
         头像文件校验
-        校验规则：用户上传的头像必须是.jpg或.png格式
+        校验规则：用户上传的头像必须是图片格式
         :param ext: 头像文件扩展名
         :return: False/True
         """
 
-        if ext not in ['jpg', 'png']:
+        if ext not in ['jpg', 'png', 'gif', 'bmp', 'jpeg']:
             return False
         return True

@@ -3,9 +3,9 @@ $(function () {
     $('#doc-dropdown-js').dropdown({justify: '#doc-dropdown-justify-js'});
 });
 //个人信息
-$('.am-dropdown .own_head').click(function () {
-    $(this).next('div').css('display','block')
-});
+// $('.am-dropdown .own_head').click(function () {
+//     $(this).next('div').css('display','block')
+// });
 //除指定区域，点击关闭个人信息
 $(document).click(function (e) {
     var $target = $(e.target);
