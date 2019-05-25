@@ -53,7 +53,7 @@ def add_friend():
         # 查询relation数据库中是否存在该关系
         re = db.session.query(Relation).filter_by(pri_id=pri_id, sub_id=sub_id).first()
         if re:
-            return ret_error("已经是好友，不能重复添加")
+            return ret_error("已经是好友或已经申请")
         else:
             # 状态为陌生人
             relation_type = 3
@@ -61,6 +61,7 @@ def add_friend():
             user_info = {'pri_id': pri_id, 'sub_id': sub_id, 'remark': remark, 'relation_type': relation_type,
                          'add_time': get_time()}
             Relation.add_one(**user_info)
+            return ret_sucess('申请成功')
     else:
         # 加群
         words = '大家好,我是' + uinfo.user_nick_name
@@ -77,28 +78,22 @@ def add_friend():
                           'user_pic': uinfo.pic_name,
                           'add_time': get_time()}
             GroupUser.add_one(**group_info)
-            # 第二步：chat_list插入数据
-            chat_list_info = {'pri_user_id': pri_id, 'group_id': group_id, 'content': words, 'update_time': get_time()}
-            ChatList.add_one(**chat_list_info)
-            # 查出刚插入数据的lid
-            lid_info = ChatList.query.filter(ChatList.pri_user_id == pri_id,
-                                             ChatList.group_id == group_id).first().to_json()
+            # 第二步：查出该群的lid
+            lid_info = ChatList.query.filter(ChatList.group_id == group_id).first()
+            if not lid_info:
+                # 插入chat_list
+                add_data = {'group_id':group_id,'type':2,'content':words,'update_time':get_time()}
+                ChatList.add_one(**add_data)
+            lid_info = ChatList.query.filter(ChatList.group_id == group_id).first().to_json()
             lid_info['group_name'] = gi.group_name
             lid_info['pic_name'] = gi.pic_name
             lid_info['update_time'] = get_date(lid_info['update_time'])
-            lid = lid_info['lid']
-            # 第三步：chat_records插入一条数据
-            record_info = {'lid': lid, 'send_user_id': pri_id, 'group_id': group_id,
-                           'content': words.encode(encoding='utf-8'),
-                           'content_type':1,
-                           'add_time': get_time()
-                           }
-            ChatRecords.add_one(**record_info)
-            # 第四步：群成员+1
+
+            #第三步：群成员+1
             gi.num = gi.num + 1
             db.session.add(gi)
 
-    return ret_sucess('添加成功',lid_info)
+        return ret_sucess('添加成功',lid_info)
 
 
 # 同意好友请求
@@ -147,12 +142,6 @@ def fri_request():
         lid_info['user_nick_name'] = uinfo.user_nick_name
         lid_info['pic_name'] = uinfo.pic_name
         lid = lid_info['lid']
-        # 第三步：chat_records插入一条数据
-        record_info = {'lid': lid, 'send_user_id': pri_id, 'recv_user_id': sub_id,
-                       'content': words.encode(encoding='utf-8'), 'content_type': 1,
-                       'add_time': get_time()
-                       }
-        ChatRecords.add_one(**record_info)
         return ret_sucess('你们已经是好友了，快去聊天吧', lid_info)
 
 
