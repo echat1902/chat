@@ -1,3 +1,5 @@
+import operator
+
 from app.common.funs import chkLogin
 from . import tg
 from flask import render_template, request, session, redirect, make_response, abort
@@ -10,6 +12,8 @@ import time, datetime, random
 from geventwebsocket.handler import WebSocketHandler
 from gevent.pywsgi import WSGIServer
 from flask_socketio import SocketIO
+
+
 # from manager import socketio
 
 # 首页
@@ -24,7 +28,8 @@ def main_index():
         user_id = userinfo['user_id']
         # 获取主聊天对象
         # res =db.session.query(ChatList).filter_by(pri_user_id=user_id).all()
-        res = ChatList.query.filter(or_(ChatList.pri_user_id==user_id, ChatList.sub_user_id==user_id)).all()
+        res = ChatList.query.filter(or_(ChatList.pri_user_id == user_id, ChatList.sub_user_id == user_id),
+                                    ChatList.group_id == 0).all()
         # 获取主聊天对象的信息
         infos = []
         for i in res:
@@ -32,18 +37,29 @@ def main_index():
                 o_user_id = i.pri_user_id
             else:
                 o_user_id = i.sub_user_id
-            if i.sub_user_id:
-                # 查出用户信息
-                info = User.query.filter_by(user_id=o_user_id).first()
-            else:
-                # 查出群信息
-                info = Ylgroup.query.filter_by(group_id=i.group_id).first()
+            # 查出用户信息
+            info = User.query.filter_by(user_id=o_user_id).first()
 
             if info:
                 info.content = i.content
                 info.lid = i.lid
                 info.update_time = get_date(i.update_time)
                 infos.append(info)
+        # 查出群信息
+        res = db.session.query(ChatList.lid, ChatList.update_time,Ylgroup.group_id, Ylgroup.group_no, Ylgroup.group_name,
+                               Ylgroup.pic_name).join(GroupUser,
+                                                      ChatList.group_id == GroupUser.group_id).filter(
+            GroupUser.user_id == user_id).join(
+            Ylgroup, GroupUser.group_id == Ylgroup.group_id).all()
+        for i in res:
+            group_info = {}
+            group_info['lid'] = i[0]
+            group_info['update_time'] = get_date(i[1])
+            group_info['group_id'] = i[2]
+            group_info['group_no'] = i[3]
+            group_info['group_name'] = i[4]
+            group_info['pic_name'] = i[5]
+            infos.append(group_info)
         data = [userinfo, infos]
         return render_template('index.html', data=data)
     return redirect('/login')
@@ -63,30 +79,31 @@ def get_chat_records():
     #     subinfo = User.query.filter_by(user_id=res.sub_user_id).first().to_json()
 
     # 获取聊天记录
-    res = ChatRecords.query.filter_by(lid=lid).order_by(db.asc(ChatRecords.add_time)).limit(10).all()
+    res = ChatRecords.query.filter_by(lid=lid).order_by(db.desc(ChatRecords.add_time)).limit(10).all()
+    print(res)
     # res = db.session.query(ChatRecords).join(User, ChatRecords.send_user_id == User.user_id).filter(
     #     ChatRecords.lid == lid).order_by(db.desc(ChatRecords.add_time)).limit(10).all()
-
-    print(res)
-    # records = {'userinfo': subinfo, 'records': []}
-    records = []
+    re = []
     for i in res:
-        uinfo = User.query.filter_by(user_id=i.send_user_id).first().to_json()
-        i.userinfo = uinfo
+        re.append(i.to_json())
+    result = sorted(re, key=operator.itemgetter('add_time'))
+    # records = {'userinfo': subinfo, 'records': []}
+    for i in result:
+        uinfo = User.query.filter_by(user_id=i['send_user_id']).first().to_json()
+        i['userinfo'] = uinfo
         # 如果该条记录为文件
-        if i.content_type == 3:
-            if isinstance(i.content, bytes):
-                file_id = int(str(i.content, encoding='utf-8'))
+        if i['content_type'] == 3:
+            if isinstance(i['content'], bytes):
+                file_id = int(str(i['content'], encoding='utf-8'))
             else:
-                file_id = int(i.content)
+                file_id = int(i['content'])
             # 获取文件信息
             file_info = YlFiles.query.filter_by(file_id=file_id).first().to_json()
             file_info['file_ext'] = file_info['file_name'].split('.')[-1]
-            i.file_info = file_info
-        records.append(i.to_json())
-    #print(records)
-    return json.dumps(records)
+            i['file_info'] = file_info
 
+    # print(records)
+    return json.dumps(result)
 
 
 # 登录

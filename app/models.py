@@ -124,10 +124,10 @@ class ChatRecords(db.Model, DbCommon):
     record_id = db.Column(db.Integer, primary_key=True)
     lid = db.Column(db.Integer)
     send_user_id = db.Column(db.Integer)
-    group_id = db.Column(db.Integer)
-    recv_user_id = db.Column(db.Integer)
+    group_id = db.Column(db.Integer, default=0)
+    recv_user_id = db.Column(db.Integer, default=0)
     content = db.Column(db.LargeBinary(65535))
-    content_type = db.Column(db.Integer)
+    content_type = db.Column(db.Integer, default=1)
     add_time = db.Column(db.Integer)
 
 
@@ -138,8 +138,8 @@ class ChatList(db.Model, DbCommon):
     __tablename__ = 'chat_list'
     lid = db.Column(db.Integer, primary_key=True)
     pri_user_id = db.Column(db.Integer)
-    sub_user_id = db.Column(db.Integer)
-    group_id = db.Column(db.Integer)
+    sub_user_id = db.Column(db.Integer, default=0)
+    group_id = db.Column(db.Integer,default=0)
     type = db.Column(db.Integer, default=1)
     content = db.Column(db.String(128))
     list_sort = db.Column(db.Integer, default=0)
@@ -155,7 +155,7 @@ class Relation(db.Model, DbCommon):
     pri_id = db.Column(db.Integer)
     sub_id = db.Column(db.Integer)
     remark = db.Column(db.String(255))
-    relation_type = db.Column(db.Integer)
+    relation_type = db.Column(db.Integer, default=1)
     add_time = db.Column(db.Integer)
 
 
@@ -166,12 +166,12 @@ class YlFiles(db.Model, DbCommon):
     __tablename__ = 'yl_files'
     file_id = db.Column(db.Integer, primary_key=True)
     send_user_id = db.Column(db.Integer)
-    group_id = db.Column(db.Integer)
-    recv_user_id = db.Column(db.Integer)
+    group_id = db.Column(db.Integer,default=0)
+    recv_user_id = db.Column(db.Integer,default=0)
     file_name = db.Column(db.String(200))
     file_path = db.Column(db.String(300))
-    file_type = db.Column(db.Integer)
-    file_size = db.Column(db.Integer)
+    file_type = db.Column(db.Integer,default=3)
+    file_size = db.Column(db.Integer, default=0)
     add_time = db.Column(db.Integer)
 
 
