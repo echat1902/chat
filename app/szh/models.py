@@ -106,7 +106,7 @@ def get_file_id(pri_id,int_time):
     return db.session.query(YlFiles.file_id).filter(YlFiles.send_user_id==pri_id,YlFiles.add_time==int_time).first()[0]
 
 
-def get_pick_name(obj,send_id):
+def get_nick_name(obj,send_id):
     """
     根据lid对象及用户id返回个人昵称或群昵称
     :param lid:
@@ -114,7 +114,7 @@ def get_pick_name(obj,send_id):
     :return:
     """
     if obj.group_id == 0:
-        return query_user_pic_name(send_id)
+        return query_user_self_nink_name(send_id)
     return query_user_groupnick_name(send_id,obj.group_id)
 
 
