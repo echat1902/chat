@@ -42,7 +42,7 @@ def test_message(message):
             add_file_yi_file(message, int_time, group_id=recv_id)
         content = str(get_file_id(send_user_id, int_time))  # 消息记录内容为文件记录表中该文件的id
         msg_dict = {"lid": lid, "user_nick_name": user_nick_name, "pic_name": pic_name, "msg_type": msg_type,
-                    "file_name": message["file_name"], "file_ext": ext, "filesize": message["file_size"]}
+                    "file_name": message["file_name"], "file_ext": ext, "filesize": message["file_size"],"file_path":message["file_path"]}
     elif msg_type == 2:  # 图片
         chatlist_content = "[图片]"
         content = message["send_msg"]

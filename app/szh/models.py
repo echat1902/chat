@@ -145,6 +145,7 @@ def update_chatlist(obj,pri_id,content,add_time):
     obj.content = content
     obj.update_time = add_time
     db.session.add(obj)
+    db.session.commit()
 
 
 def update_chatlist_group(obj,pri_id,content,add_time):
