@@ -116,6 +116,9 @@
         .file_down:hover{
             cursor: pointer;
         }
+        .delete_obj:hover{
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -375,7 +378,7 @@
                     <div id="doc-oc-demo3" class="am-offcanvas">
                         <div class="am-offcanvas-bar am-offcanvas-bar-flip" style="height: 680px;margin:auto">
                             <div class="am-offcanvas-content">
-                                <p><a href="http://music.163.com/#/song?id=385554" target="_blank">网易音乐</a></p>
+                                <p class="delete_obj">删除并退出</p>
                             </div>
                         </div>
                     </div>
@@ -540,6 +543,21 @@
         scrollTop = chat[0].scrollHeight;
         chat.parent().scrollTop(scrollTop);
     }
+    //删除好友/群
+    $('.delete_obj').click(function () {
+        ac = $('.user_active');
+        lid = ac.attr('id');
+        uid = ac.attr('uid');
+        if(lid == undefined){
+            layer.msg('请选择一个删除对象');
+        }else{
+            layer.msg('删除成功',{time:2000},function () {
+                ac.remove();
+                close_talk()
+            });
+        }
+
+    });
     //点击添加好友按钮
     $('#add_button').click(function () {
         index1 = layer.open({
