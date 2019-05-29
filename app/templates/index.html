@@ -597,7 +597,7 @@
         $('.obj_list').css('display', 'block').html('');
         var user_id = $('#user_id').val()
         $.get('/friRequest?user_id=' + user_id, '', function (data) {
-            console.log(data)
+
             $.each(data.data, function (k, v) {
                 str = '<div class="new_friend" id="' + v.pri_id + '">\n' +
                     '                    <div class="uinfo">\n' +
@@ -673,7 +673,6 @@
 
         socket.on('server_response', function (res) {
             res = JSON.parse(res);
-            console.log(res)
             lid = res.lid;
             num_area = $('#' + lid).children('div').eq(0);
             if(res.msg_type==1){
@@ -765,7 +764,7 @@
             var pri_id = obj.parent().parent().attr('id')
             var sub_id = $('#user_id').val();
             $.post('/friRequest', {pri_id: pri_id, sub_id: sub_id}, function (data) {
-                console.log(data);
+
                 if (data.status == 1) {
                     layer.msg(data.msg, {time: 2000}, function () {
                         obj.parent().parent().remove();
@@ -817,7 +816,7 @@
             b();
             //获取聊天记录
             $.get('/get_chat_records?user_id=' + user_id + '&lid=' + lid, function (data) {
-                console.log(data)
+
                 $('.windows_top_box .user_title').html(user_title);
                 $.each(data, function (k, v) {
                     if (v.send_user_id == $('#user_id').val()) {
@@ -972,7 +971,6 @@
                         $(' .middle_text').last().html(filesize);
                         //发送文件
                         var content = file_format(file);
-                        console.log(content)
                         socket.emit('imessage', content);
                     } else {
                         file_info = file.source.source;
@@ -1000,6 +998,7 @@
                                 'send_msg': this.result,
                                 'msg_type':2
                             }
+
                             socket.emit('imessage', content);
                         }
                     }
