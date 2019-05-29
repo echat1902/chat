@@ -42,7 +42,7 @@ def main_index():
                 info.update_time = get_date(i.update_time)
                 infos.append(info)
         # 查出群信息
-        res = db.session.query(ChatList.lid, ChatList.update_time,Ylgroup.group_id, Ylgroup.group_no, Ylgroup.group_name,
+        res = db.session.query(ChatList.lid,ChatList.content, ChatList.update_time,Ylgroup.group_id, Ylgroup.group_no, Ylgroup.group_name,
                                Ylgroup.pic_name).join(GroupUser,
                                                       ChatList.group_id == GroupUser.group_id).filter(
             GroupUser.user_id == user_id).join(
@@ -50,11 +50,12 @@ def main_index():
         for i in res:
             group_info = {}
             group_info['lid'] = i[0]
-            group_info['update_time'] = get_date(i[1])
-            group_info['group_id'] = i[2]
-            group_info['group_no'] = i[3]
-            group_info['group_name'] = i[4]
-            group_info['pic_name'] = i[5]
+            group_info['content'] = i[1]
+            group_info['update_time'] = get_date(i[2])
+            group_info['group_id'] = i[3]
+            group_info['group_no'] = i[4]
+            group_info['group_name'] = i[5]
+            group_info['pic_name'] = i[6]
             infos.append(group_info)
         data = [userinfo, infos]
         return render_template('index.html', data=data)

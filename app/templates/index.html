@@ -937,9 +937,10 @@
                         var img_addr = pic_addr + "{{data[0].pic_name}}";
                         //获取文件名
                         var file_name = file.name;
+                        var file_path = '/static/upload/'+now_time+'/'+file_name
                         var str_file_ext = file.ext;
                         //展示文件
-                        file_show(obj, img_addr, file_name, str_file_ext, 1, 0, 3)
+                        file_show(obj, img_addr, file_name, str_file_ext, 1, 0,file_path, 3)
                     }
                 });
                 uploader.on('startUpload', function () { // 开始上传时，调用该方法
