@@ -14,8 +14,8 @@
     <link rel="stylesheet" href="/static/layui/css/layui.css">
     <style>
         .send_msg {
-            width: 160px;
-            height: 80px;
+            width: 120px;
+            height: 120px;
         }
 
         #add_friend_frame {
@@ -113,9 +113,14 @@
             height: 50px;
             border: none;
         }
+        .file_down:hover{
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
+<a class="file_down" style="cursor: pointer;" href="/static/upload/1559047962138/pip-19.0.3.tar.gz">下载</a>
+
 <div class="box">
     <div class="wechat">
         <input type="hidden" id="user_id" value={{ data[0].user_id }}>
@@ -386,6 +391,7 @@
                     <ul class="content" id="chatbox">
 
                     </ul>
+
                 </div>
             </div>
             <!-- 好友申请列表 -->
@@ -497,7 +503,7 @@
         <div class="layui-form-item">
             <label class="layui-form-item">邮箱</label>
             <div class="layui-form-block">
-                <input type="email" name="user_email" required lay-verify="email"
+                <input type="email" name="user_email" lay-verify="email"
                     {% if data[0].user_email %}
                        value="{{ data[0].user_email }}"
                     {% else %}
@@ -657,8 +663,9 @@
                 var file_name = content['file_name'];
                 var str_file_ext = content['file_ext'];
                 var filesize = get_file_size(content['filesize']);
+                var file_path = content['file_path'] + file_name;
                 var content_type = 3;
-                file_show('other', img_addr, file_name, str_file_ext, 2, filesize, content_type);
+                file_show('other', img_addr, file_name, str_file_ext, 2, filesize,file_path, content_type);
             }
 
         }
@@ -756,47 +763,47 @@
     });
         //接受好友
         $(document).on('click', '.recv', function () {
-        obj = $(this)
-        var pri_id = obj.parent().parent().attr('id')
-        var sub_id = $('#user_id').val();
-        $.post('/friRequest', {pri_id: pri_id, sub_id: sub_id}, function (data) {
-            console.log(data);
-            if (data.status == 1) {
-                layer.msg(data.msg, {time: 2000}, function () {
-                    obj.parent().parent().remove();
-                    str = '<li\n' +
-                        '         id=' + data.data.lid + '\n' +
-                        '         uid=' + data.data.pri_id + '\n' +
-                        '         title=' + data.data.user_nick_name + '\n' +
-                        '         >\n' +
-                        '           <div class="red_circle">1</div>\n' +
-                        '           <div class="user_head"><img src=/static/images/head/' + data.data.pic_name + ' /></div>\n' +
-                        '           <div class="user_text">\n' +
-                        '               <p class="user_name">\n' +
-                        '                   ' + data.data.user_nick_name + '\n' +
-                        '               </p>\n' +
-                        '               <p class="user_message">' + data.data.content + '</p>\n' +
-                        '           </div>\n' +
-                        '           <div class="user_time">' + data.data.update_time + '</div>\n' +
-                        '      </li>';
-                    $('.user_list').append(str)
-                    //加入到这个房间
-                    add_room(data.data.lid)
-                    content={
-                        'lid':data.data.lid,
-                        'send_user_id':pri_id,
-                        'send_msg':'你好,我是'+data.data.user_nick_name,
-                        'msg_type':1
-                    };
-                    socket.emit('imessage', content);
+            obj = $(this)
+            var pri_id = obj.parent().parent().attr('id')
+            var sub_id = $('#user_id').val();
+            $.post('/friRequest', {pri_id: pri_id, sub_id: sub_id}, function (data) {
+                console.log(data);
+                if (data.status == 1) {
+                    layer.msg(data.msg, {time: 2000}, function () {
+                        obj.parent().parent().remove();
+                        str = '<li\n' +
+                            '         id=' + data.data.lid + '\n' +
+                            '         uid=' + data.data.pri_id + '\n' +
+                            '         title=' + data.data.user_nick_name + '\n' +
+                            '         >\n' +
+                            '           <div class="red_circle">1</div>\n' +
+                            '           <div class="user_head"><img src=/static/images/head/' + data.data.pic_name + ' /></div>\n' +
+                            '           <div class="user_text">\n' +
+                            '               <p class="user_name">\n' +
+                            '                   ' + data.data.user_nick_name + '\n' +
+                            '               </p>\n' +
+                            '               <p class="user_message">' + data.data.content + '</p>\n' +
+                            '           </div>\n' +
+                            '           <div class="user_time">' + data.data.update_time + '</div>\n' +
+                            '      </li>';
+                        $('.user_list').append(str)
+                        //加入到这个房间
+                        add_room(data.data.lid)
+                        content={
+                            'lid':data.data.lid,
+                            'send_user_id':pri_id,
+                            'send_msg':'你好,我是'+data.data.user_nick_name,
+                            'msg_type':1
+                        };
+                        socket.emit('imessage', content);
 
-                })
-            } else {
-                layer.msg(data.msg)
-            }
+                    })
+                } else {
+                    layer.msg(data.msg)
+                }
 
-        }, 'json')
-    })
+            }, 'json')
+        })
         //获取聊天记录
         $(document).on('click', '.user_list li', function () {
             open_talk();
@@ -830,7 +837,8 @@
                         str_file_ext = v.file_info.file_ext;
                         //显示文件大小
                         filesize = get_file_size(v.file_info.file_size);
-                        file_show(u, img_addr, file_name, str_file_ext, 2, filesize, v.content_type);
+                        file_path = v.file_info.file_path + file_name;
+                        file_show(u, img_addr, file_name, str_file_ext, 2, filesize,file_path, v.content_type);
                     }
                     $('#chatbox').append(info)
                     scroll_to_bottom()
@@ -857,7 +865,7 @@
         }
 
         // 文件展示
-        function file_show(obj, img_addr, file_name, str_file_ext, is_process, file_size = 0, content_type) {
+        function file_show(obj, img_addr, file_name, str_file_ext, is_process, file_size = 0,file_path, content_type) {
             chat.append('<li class=' + obj + ' utype=' + content_type + ' ><img src="' + img_addr + '"><i></i></li>');
             $("#chatbox li").last().children('i').load('/static/view/processBar.html', function () {
                 is_in = jQuery.inArray(str_file_ext, file_exts);
@@ -868,6 +876,7 @@
                 }
                 $(' .left_text').last().children('k').html(file_name);
                 $('.file_frame .right_file').last().children('img').attr('src', '/static/images/file_icon/' + file_icon);
+                $('.bottom_down a').attr('href',file_path);
                 //filename = file.name;
                 if (is_process == 1) {
                     $('#progress').show();

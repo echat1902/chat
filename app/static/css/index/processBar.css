@@ -45,12 +45,28 @@
     border-bottom: solid 1px #E7E7E7 ;
 }
 .bottom_text{
-    clear: both;
-    width: 198px;
+    float: left;
+    width: 80px;
     height: 22px;
     font-size: 13px;
     padding: 5px 0 5px 15px;
     color: #B2B2B2;
+}
+.bottom_down{
+    float: right;
+    width: 60px;
+    height: 22px;
+    font-size: 14px;
+    line-height: 22px;
+    text-align: center;
+    margin-right: 8px;
+    padding: 5px 0 5px 5px;
+}
+.bottom_down a:hover{
+    text-decoration: none;
+}
+.bottom_down:hover{
+    cursor: pointer;
 }
 .file_frame:hover{
     background: #F5F5F5; ;
