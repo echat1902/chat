@@ -528,6 +528,7 @@
 <script type="text/javascript" src="//cdn.bootcss.com/socket.io/1.5.1/socket.io.min.js"></script>
 <script src="/static/layui/layui.js"></script>
 <script type="text/javascript">
+
     var now_time = (new Date()).getTime();
     pic_addr = '/static/images/head/';
      //等待服务器推送消息
@@ -816,7 +817,6 @@
             b();
             //获取聊天记录
             $.get('/get_chat_records?user_id=' + user_id + '&lid=' + lid, function (data) {
-
                 $('.windows_top_box .user_title').html(user_title);
                 $.each(data, function (k, v) {
                     if (v.send_user_id == $('#user_id').val()) {
