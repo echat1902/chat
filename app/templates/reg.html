@@ -43,34 +43,7 @@
 
             </div>
         </div>
-        <!--<div class="register-box">-->
-        <!--<label for="mobile" class="other_label">-->
-        <!--<span>中国 0086∨</span>-->
-        <!--<input class="phone" name='user_tel' id="mobile" maxlength="20" type="text" placeholder="建议使用常用手机"/>-->
-        <!--</label>-->
-        <!--<div class="tips">-->
 
-        <!--</div>-->
-        <!--</div>-->
-        <!--<div class="register-box">-->
-        <!--<label class="other_label">验 证 码-->
-        <!--<input name="verify" maxlength="20" type="text" placeholder="请输入验证码"/>-->
-        <!--</label>-->
-        <!--<span id="code"><img src="{:U('verify')}" alt="验证码" class='yzmImg'-->
-        <!--onclick="this.src='{:U(\'verify\',array(\'num\'=>mt_rand()))}'"/></span>-->
-        <!--<div class="tips">-->
-
-        <!--</div>-->
-        <!--</div>-->
-        <!--<div class="register-box">-->
-        <!--<label  class="other_label">手机验证码-->
-        <!--<input name="msg_code" maxlength="20" type="text" placeholder="请输入短信验证码"/>-->
-        <!--</label>-->
-        <!--<span id=""><div  id="yzmBtn" onclick="sendMsg()">获取验证码</div></span>-->
-        <!--<div class="tips">-->
-
-        <!--</div>-->
-        <!--</div>-->
         <div class="arguement">
             <input type="checkbox" checked id="xieyi"/>
             阅读并同意
@@ -162,20 +135,7 @@
             user_rpwd: {
                 required: '确认密码不能为空',
                 equalTo: '两次密码输入不一致'
-            },
-            // user_tel:{
-            //     required:'手机号不能为空',
-            //     //user_tel:"请正确填写您的手机号码",
-            // 	remote:'该号码已被注册过'
-            // },
-            // msg_code:{
-            //     required:'手机验证码不能为空',
-            //     remote:'短信验证码错误'
-            // },
-            // verify:{
-            //     required:'验证码不能为空',
-            //     remote:'验证码错误'
-            // }
+            }
         },
         //配置成功提示样式
         errorElement: 'div',
@@ -188,26 +148,26 @@
 
     })
 
-    function sendMsg() {
-
-        var mobile = $('input[name="user_tel"]').val();
-        var mobileReg = /^1[34578][0-9]{9}$/;
-        if (mobileReg.test(mobile)) {
-            RemainTime();
-            $.post('/sendMsg', {mobile: mobile}, function (msg) {
-                if (msg == '提交成功') {
-
-                } else {
-                    layer.tips(msg, '#yzmBtn', {
-                        tips: [3, '#FF7113']
-                    });
-                }
-            })
-        } else {
-            $('#mobile').parent().next('div').text('请输入正确的手机号码').css('color', '#f0f');
-            $('#mobile').parent().parent().css('border', 'solid 1px red')
-        }
-    }
+{#    function sendMsg() {#}
+{##}
+{#        var mobile = $('input[name="user_tel"]').val();#}
+{#        var mobileReg = /^1[34578][0-9]{9}$/;#}
+{#        if (mobileReg.test(mobile)) {#}
+{#            RemainTime();#}
+{#            $.post('/sendMsg', {mobile: mobile}, function (msg) {#}
+{#                if (msg == '提交成功') {#}
+{##}
+{#                } else {#}
+{#                    layer.tips(msg, '#yzmBtn', {#}
+{#                        tips: [3, '#FF7113']#}
+{#                    });#}
+{#                }#}
+{#            })#}
+{#        } else {#}
+{#            $('#mobile').parent().next('div').text('请输入正确的手机号码').css('color', '#f0f');#}
+{#            $('#mobile').parent().parent().css('border', 'solid 1px red')#}
+{#        }#}
+{#    }#}
 
     //短信倒计时
     var iTime = 59;

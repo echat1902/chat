@@ -20,25 +20,7 @@ $(function(){
 			$(this).parent().next("div").append("<p>请再次输入密码</p>");
 		}
 	})
-	$('input').eq(3).focus(function(){
-		if($(this).val().length==0){
-            $(this).parent().next("div").text('');
-			$(this).parent().next("div").append("<p>验证完后，你可以使用该手机登陆和找回密码</p>").css('color','#ccc');
-			$(this).parent().parent().css('border','solid 1px #ccc');
-		}
-	})
-	$('input').eq(4).focus(function(){	
-		if($(this).val().length==0){
-            $(this).parent().next().next("div").text('');
-			$(this).parent().next().next("div").append("<p>看不清？点击图片更换验证码</p>");
-		}
-	})
-    $('input').eq(5).focus(function(){
-        if($(this).val().length==0){
-            $(this).parent().next("div").text('');
-            $(this).parent().next().next("div").append("");
-        }
-    })
+
 	//input各种判断
 	//用户名：
 	$('input').eq(0).blur(function(){
@@ -63,20 +45,7 @@ $(function(){
 			$(this).parent().next("div").css("color",'#ccc');
 		}
 	})
-//	手机号
-	$('input').eq(3).blur(function(){
-		$mobile=$(this).val();
-        var mobileReg = /^1[34578][0-9]{9}$/;
-		if($(this).val().length==0){
-			$(this).parent().next("div").children('p').text("");
-			$(this).parent().next("div").css("color",'#ccc');
-		}else if(!mobileReg.test($mobile) || $(this).val().length!=11){
-			$(this).parent().next("div").text("手机号格式不正确");
-			$(this).parent().next("div").css("color",'#f0f');
-		}else{
-			$(this).parent().next("div").text("");
-		}		
-	})
+
 // 	验证码
 //	 验证码刷新
 	/*function code(){
@@ -90,14 +59,7 @@ $(function(){
 	}
 	code();
 	$("#code").click(code);	*/
-//	验证码验证
-	$('input').eq(4).blur(function(){
-		if($(this).val().length==0){
-			$(this).parent().next().next("div").text("");
-			$(this).parent().next().next("div").css("color",'#ccc');
-		}
-        $(this).parent().next().next("div").children('p').text("");
-	})
+
 // 手机验证码
 /*	$('input').eq(5).blur(function () {
 		if($(this).val().length==0){
