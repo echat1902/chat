@@ -1,16 +1,10 @@
 import operator
 
-from app.common.funs import chkLogin
 from . import tg
-from flask import render_template, request, session, redirect, make_response, abort
+from flask import render_template,redirect, make_response
 from .models import *
-from app.common.funs import *
-from app.models import *
-from manager1 import socketio
-from flask_socketio import emit,join_room,leave_room
 from app.szh.models import *
 
-# from manager import socketio
 
 # 首页
 @tg.route('/')
