@@ -883,6 +883,7 @@
         function file_show(obj, img_addr, file_name, str_file_ext, is_process, file_size = 0,file_path, content_type) {
             chat.append('<li class=' + obj + ' utype=' + content_type + ' ><img src="' + img_addr + '"><i></i></li>');
             $("#chatbox li").last().children('i').load('/static/view/processBar.html', function () {
+                th=$("#chatbox li").last().children('i')
                 is_in = jQuery.inArray(str_file_ext, file_exts);
                 if (is_in == -1) {
                     file_icon = 'c.png'
@@ -891,7 +892,7 @@
                 }
                 $(' .left_text').last().children('k').html(file_name);
                 $('.file_frame .right_file').last().children('img').attr('src', '/static/images/file_icon/' + file_icon);
-                $('.bottom_down a').attr('href',file_path);
+                $(this).children('.file_frame').children('.bottom_down').children('a').attr('href',file_path);
                 //filename = file.name;
                 if (is_process == 1) {
                     $('#progress').show();
