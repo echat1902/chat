@@ -820,8 +820,10 @@
 
             }, 'json')
         })
+        var filelist = [];
         //获取聊天记录
         $(document).on('click', '.user_list li', function () {
+            filelist=[]
             open_talk();
             $('#talkbox').css('display', 'block');
             lid = $(this).attr("id");
@@ -835,6 +837,7 @@
             b();
             //获取聊天记录
             $.get('/get_chat_records?user_id=' + user_id + '&lid=' + lid, function (data) {
+                console.log(data)
                 $('.windows_top_box .user_title').html(user_title);
                 $.each(data, function (k, v) {
                     if (v.send_user_id == $('#user_id').val()) {
@@ -845,8 +848,10 @@
                     img_addr = pic_addr + v.userinfo.pic_name;
                     if (v.content_type == 1) {
                         var info = '<li class=' + u + ' utype=' + v.content_type + ' ><img src="' + img_addr + '" title="' + v.userinfo.user_nick_name + '"><span>' + v.content + '</span></li>'
+                        $('#chatbox').append(info)
                     } else if (v.content_type == 2) {
                         info = '<li class=' + u + ' utype=' + v.content_type + ' ><img  src="' + img_addr + '" title="' + v.userinfo.user_nick_name + '"><img class="send_msg" src="' + v.content + '" /></li>'
+                        $('#chatbox').append(info)
                     } else {
                         file_name = v.file_info.file_name;
                         str_file_ext = v.file_info.file_ext;
@@ -855,7 +860,7 @@
                         file_path = v.file_info.file_path + file_name;
                         file_show(u, img_addr, file_name, str_file_ext, 2, filesize,file_path, v.content_type);
                     }
-                    $('#chatbox').append(info)
+
                     scroll_to_bottom()
                 })
             }, 'json')
@@ -879,20 +884,21 @@
             return filesize;
         }
 
-        // 文件展示
+        //文件展示
         function file_show(obj, img_addr, file_name, str_file_ext, is_process, file_size = 0,file_path, content_type) {
-            chat.append('<li class=' + obj + ' utype=' + content_type + ' ><img src="' + img_addr + '"><i></i></li>');
-            $("#chatbox li").last().children('i').load('/static/view/processBar.html', function () {
-                th=$("#chatbox li").last().children('i')
+            nlist = '<li class=' + obj + ' utype=' + content_type + ' ><img src="' + img_addr + '"><i></i></li>'
+            nobj = $(nlist).appendTo(chat);
+            nobj.children('i').load('/static/view/processBar.html', function () {
+                var finfo = $(this).children('.file_frame')
                 is_in = jQuery.inArray(str_file_ext, file_exts);
                 if (is_in == -1) {
                     file_icon = 'c.png'
                 } else {
                     file_icon = str_file_ext + '.png'
                 }
-                $(' .left_text').last().children('k').html(file_name);
-                $('.file_frame .right_file').last().children('img').attr('src', '/static/images/file_icon/' + file_icon);
-                $(this).children('.file_frame').children('.bottom_down').children('a').attr('href',file_path);
+                finfo.children(' .left_text').children('k').html(file_name);
+                finfo.children('.right_file').children('img').attr('src', '/static/images/file_icon/' + file_icon);
+                finfo.children('.bottom_down').children('a').attr('href',file_path);
                 //filename = file.name;
                 if (is_process == 1) {
                     $('#progress').show();
@@ -901,12 +907,13 @@
                     $('.progress-bar').removeClass('progress-bar-danger progress-bar-success');
 
                 } else {
-                    $('.middle_text').last().html(file_size)
+                    finfo.children('.middle_text').html(file_size)
                 }
                 //让滚动条到最底部
                 scroll_to_bottom()
-            });
+                });
         }
+
 
          // 发送文件时的消息格式
         function file_format(obj_file) {
