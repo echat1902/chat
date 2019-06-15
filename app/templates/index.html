@@ -560,13 +560,21 @@
         var ac = $('.user_active');
         lid = ac.attr('id');
         uid = ac.attr('uid');
+        pid = {{ data[0].user_id }}
         if(lid == undefined){
             layer.msg('请选择一个删除对象');
         }else{
-            layer.msg('删除成功',{time:2000},function () {
-                ac.remove();
-                close_talk()
-            });
+            $.post('/delFriend',{'lid':lid,'pid':pid,'uid':uid},function (data) {
+                if(data.status==1){
+                    layer.msg('删除成功',{time:2000},function () {
+                        ac.remove();
+                        close_talk()
+                    });
+                }else{
+                    layer.msg('未知错误')
+                }
+            },'json')
+
         }
 
     });
