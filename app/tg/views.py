@@ -96,8 +96,21 @@ def get_chat_records():
     # print(records)
     return json.dumps(result)
 
-
-
+# 获取用户/群号码
+@tg.route('/get_no', methods=['GET', 'POST'])
+def get_no():
+    lid = request.form['lid']
+    uid = request.form['uid']
+    # 判断是群聊还是私聊
+    tuple_type = db.session.query(ChatList.type).filter(ChatList.lid==lid).first()
+    print(tuple_type[0])
+    # 获取no
+    if tuple_type[0] == 1:
+        tuple_uno = db.session.query(User.user_no).filter(User.user_id==uid).first()
+    else:
+        tuple_uno = db.session.query(Ylgroup.group_no).filter(Ylgroup.group_id==uid).first()
+    data = {'type':tuple_type[0],'uno':tuple_uno[0]}
+    return ret_sucess('获取成功',data)
 
 
 # 登录

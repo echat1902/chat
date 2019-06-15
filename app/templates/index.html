@@ -377,6 +377,10 @@
                     <!-- 侧边栏内容 -->
                     <div id="doc-oc-demo3" class="am-offcanvas">
                         <div class="am-offcanvas-bar am-offcanvas-bar-flip" style="height: 680px;margin:auto">
+                            <div  class="am-offcanvas-content" >
+                                <span>易号：</span>
+                                <span class="yno"></span>
+                            </div>
                             <div class="am-offcanvas-content">
                                 <p class="delete_obj">删除并退出</p>
                             </div>
@@ -450,7 +454,7 @@
         display: none;
     }
     #user_info_show .user_head_show{
-        width: 100px;
+        width: 150px;
         position: absolute;
         top: 50px;
         left: 20px;
@@ -476,11 +480,19 @@
         position: absolute;
         right: 100px;
     }
+    #user_no{
+        margin-top:15px;
+        color: #888;
+    }
 </style>
 <div id="user_info_show">
     <div class="user_head_show">
         <img src="/static/images/head/{{ data[0].pic_name }}" alt="头像">
         <button type="button" class="layui-btn" id="user_head_upload">上传</button>
+        <div id="user_no">
+            <label>易号: </label>
+            <span>{{ data[0].user_no }}</span>
+        </div>
     </div>
     <form class="layui-form layui-form-pane" method="post">
         <div class="layui-form-item">
@@ -545,7 +557,7 @@
     }
     //删除好友/群
     $('.delete_obj').click(function () {
-        ac = $('.user_active');
+        var ac = $('.user_active');
         lid = ac.attr('id');
         uid = ac.attr('uid');
         if(lid == undefined){
@@ -558,6 +570,28 @@
         }
 
     });
+    //　获取用户/群号码
+    $('.extend').click(function () {
+        var obj = $('.yno')
+        var ac = $('.user_active');
+        lid = ac.attr('id');
+        uid = ac.attr('uid');
+        if(lid == undefined){
+            obj.parent('div').html('')
+        }else{
+            $.post('/get_no',{'lid':lid,'uid':uid},function (data) {
+                console.log(obj)
+                console.log(obj.prev())
+                console.log(data)
+                if(data.status == 1){
+                    if(data.data.type==2){
+                        obj.prev().html('群号码：')
+                    }
+                    obj.html(data.data.uno)
+                }
+            },'json')
+        }
+    })
     //点击添加好友按钮
     $('#add_button').click(function () {
         index1 = layer.open({
@@ -673,7 +707,7 @@
                 var info = '<li class=' + self + '><img src="/static/images/head/' + pic_name + '" title="' + user_nick_name + '"><span>' + send_msg + '</span></li>'
                 $('#chatbox').append(info)
             } else if (msg_type == 2) {
-                var info = '<li class=' + self + '><img src="/static/images/head/' + pic_name + '" title="' + user_nick_name + '"><img src="' + send_msg + '" /></li>'
+                var info = '<li class=' + self + '><img src="/static/images/head/' + pic_name + '" title="' + user_nick_name + '"><img class="send_msg" src="' + send_msg + '" /></li>'
                 $('#chatbox').append(info)
             }else{
                 var img_addr = pic_addr + pic_name;
